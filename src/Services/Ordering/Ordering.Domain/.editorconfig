@@ -2,3 +2,6 @@
 
 # S3875: "operator==" should not be overloaded on reference types
 dotnet_diagnostic.S3875.severity = none
+
+# S3925: "ISerializable" should be implemented correctly
+dotnet_diagnostic.S3925.severity = none
