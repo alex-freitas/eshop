@@ -1,41 +1,28 @@
-﻿using Ordering.Domain.Events;
-using Ordering.Domain.Exceptions;
-using Ordering.Domain.SharedKernel;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-
-namespace Ordering.Domain.AggregatesModel.OrderAggregate
+﻿namespace Ordering.Domain.AggregatesModel.OrderAggregate
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
+    using Ordering.Domain.Events;
+    using Ordering.Domain.Exceptions;
+    using Ordering.Domain.SharedKernel;
+
     public class Order : Entity, IAggregateRoot
     {
         private readonly DateTime _orderDate;
-        private int _orderStatusId ;
         private readonly List<OrderItem> _orderItems;
+
+        private int _orderStatusId;
         private string _description;
 
-        public int? PaymentMethodId { get; private set; }
-
-        public Address Address { get; private set; }
-        public int? BuyerId { get; private set; }
-        public OrderStatus OrderStatus { get; private set; }
-        public IReadOnlyCollection<OrderItem> OrderItems => _orderItems; 
-
-
-
-        protected Order()
-        {
-            _orderItems = new List<OrderItem>();
-
-        }
-
-        public Order(string userId,
+        public Order(
+            string userId,
             string userName,
             Address address,
             int cardTypeId,
             string cardNumber,
             string cardSecurityNumber,
-            string cardHolderName, 
+            string cardHolderName,
             DateTime cardExpiration,
             int? buyerId = null,
             int? paymentMethodId = null) : this()
@@ -48,9 +35,23 @@ namespace Ordering.Domain.AggregatesModel.OrderAggregate
             _orderStatusId = OrderStatus.Submitted.Id;
             _orderDate = DateTime.UtcNow;
 
-            AddOrderStartedDomainEvent(userId, userName, cardTypeId, cardNumber,
-                                      cardSecurityNumber, cardHolderName, cardExpiration);
+            AddOrderStartedDomainEvent(userId, userName, cardTypeId, cardNumber, cardSecurityNumber, cardHolderName, cardExpiration);
         }
+
+        protected Order()
+        {
+            _orderItems = new List<OrderItem>();
+        }
+
+        public int? PaymentMethodId { get; private set; }
+
+        public Address Address { get; private set; }
+
+        public int? BuyerId { get; private set; }
+
+        public OrderStatus OrderStatus { get; private set; }
+
+        public IReadOnlyCollection<OrderItem> OrderItems => _orderItems;
 
         public void AddOrderItem(int productId, string productName, decimal unitPrice, decimal discount, string pictureUrl, int units = 1)
         {
@@ -58,15 +59,17 @@ namespace Ordering.Domain.AggregatesModel.OrderAggregate
 
             if (existingOrderForProduct != null)
             {
-                //if previous line exist modify it with higher discount  and units...
+                // if previous line exist modify it with higher discount  and units...
                 if (discount > existingOrderForProduct.GetCurrentDiscount())
+                {
                     existingOrderForProduct.SetNewDiscount(discount);
+                }
 
                 existingOrderForProduct.AddUnits(units);
             }
             else
             {
-                //add validated new order item
+                // add validated new order item
                 var orderItem = new OrderItem(productId, productName, unitPrice, discount, pictureUrl, units);
                 _orderItems.Add(orderItem);
             }
@@ -75,10 +78,8 @@ namespace Ordering.Domain.AggregatesModel.OrderAggregate
         public void SetPaymentId(int id) => PaymentMethodId = id;
 
         public void SetBuyerId(int id) => BuyerId = id;
-        
-        public decimal GetTotal() => _orderItems.Sum(o => o.GetUnits() * o.GetUnitPrice());
 
-        private void StatusChangeException(OrderStatus orderStatusToChange) => throw new OrderingDomainException($"Is not possible to change the order status from {OrderStatus.Name} to {orderStatusToChange.Name}.");
+        public decimal GetTotal() => _orderItems.Sum(o => o.GetUnits() * o.GetUnitPrice());
 
         public void SetAwaitingValidationStatus()
         {
@@ -151,15 +152,20 @@ namespace Ordering.Domain.AggregatesModel.OrderAggregate
             }
         }
 
-
-        private void AddOrderStartedDomainEvent(string userId, string userName, int cardTypeId, string cardNumber,
-               string cardSecurityNumber, string cardHolderName, DateTime cardExpiration)
+        private void AddOrderStartedDomainEvent(
+            string userId,
+            string userName,
+            int cardTypeId,
+            string cardNumber,
+            string cardSecurityNumber,
+            string cardHolderName,
+            DateTime cardExpiration)
         {
-            var orderStartedDomainEvent = new OrderStartedDomainEvent(this, userId, userName, cardTypeId,
-                                                                      cardNumber, cardSecurityNumber,
-                                                                      cardHolderName, cardExpiration);
+            var evt = new OrderStartedDomainEvent(this, userId, userName, cardTypeId, cardNumber, cardSecurityNumber, cardHolderName, cardExpiration);
 
-            AddDomainEvent(orderStartedDomainEvent);
+            AddDomainEvent(evt);
         }
+
+        private void StatusChangeException(OrderStatus orderStatusToChange) => throw new OrderingDomainException($"Is not possible to change the order status from {OrderStatus.Name} to {orderStatusToChange.Name}.");
     }
 }
