@@ -1,7 +1,6 @@
 ﻿namespace Ordering.Domain.Events
 {
     using System;
-    using System.Collections.Generic;
     using MediatR;
     using Ordering.Domain.AggregatesModel.OrderAggregate;
 
@@ -40,62 +39,6 @@
         public string CardHolderName { get; }
 
         public DateTime CardExpiration { get; }
-
-        public Order Order { get; }
-    }
-
-    public class OrderStatusChangedToAwaitingValidationDomainEvent : INotification
-    {
-        public OrderStatusChangedToAwaitingValidationDomainEvent(int orderId, IEnumerable<OrderItem> orderItems)
-        {
-            OrderId = orderId;
-            OrderItems = orderItems;
-        }
-
-        public int OrderId { get; }
-
-        public IEnumerable<OrderItem> OrderItems { get; }
-    }
-
-    public class OrderStatusChangedToStockConfirmedDomainEvent : INotification
-    {
-        public OrderStatusChangedToStockConfirmedDomainEvent(int orderId)
-        {
-            OrderId = orderId;
-        }
-
-        public int OrderId { get; }
-    }
-
-    public class OrderStatusChangedToPaidDomainEvent : INotification
-    {
-        public OrderStatusChangedToPaidDomainEvent(int orderId, IEnumerable<OrderItem> orderItems)
-        {
-            OrderId = orderId;
-            OrderItems = orderItems;
-        }
-
-        public int OrderId { get; }
-
-        public IEnumerable<OrderItem> OrderItems { get; }
-    }
-
-    public class OrderShippedDomainEvent : INotification
-    {
-        public OrderShippedDomainEvent(Order order)
-        {
-            Order = order;
-        }
-
-        public Order Order { get; }
-    }
-
-    public class OrderCancelledDomainEvent : INotification
-    {
-        public OrderCancelledDomainEvent(Order order)
-        {
-            Order = order;
-        }
 
         public Order Order { get; }
     }

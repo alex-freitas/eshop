@@ -14,15 +14,21 @@
 
         public virtual int Id
         {
-            get { return _id; }
-            protected set { _id = value; }
+            get => _id;
+            protected set => _id = value;
         }
 
         public IReadOnlyCollection<INotification> DomainEvents => _domainEvents?.AsReadOnly();
 
-        public static bool operator ==(Entity left, Entity right) => Equals(left, null) ? Equals(right, null) : left.Equals(right);
+        public static bool operator ==(Entity left, Entity right)
+        {
+            return Equals(left, null) ? Equals(right, null) : left.Equals(right);
+        }
 
-        public static bool operator !=(Entity left, Entity right) => !(left == right);
+        public static bool operator !=(Entity left, Entity right)
+        {
+            return !(left == right);
+        }
 
         public void AddDomainEvent(INotification @event)
         {
@@ -30,9 +36,15 @@
             _domainEvents.Add(@event);
         }
 
-        public void RemoveDomainEvent(INotification @event) => _domainEvents?.Remove(@event);
+        public void RemoveDomainEvent(INotification @event)
+        {
+            _domainEvents?.Remove(@event);
+        }
 
-        public void ClearDomainEvents() => _domainEvents?.Clear();
+        public void ClearDomainEvents()
+        {
+            _domainEvents?.Clear();
+        }
 
         public bool IsTransient()
         {

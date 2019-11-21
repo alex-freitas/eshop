@@ -1,4 +1,6 @@
 ﻿namespace Ordering.Domain.SharedKernel
 {
-    public interface IAggregateRoot { }
+    public interface IAggregateRoot
+    {
+    }
 }

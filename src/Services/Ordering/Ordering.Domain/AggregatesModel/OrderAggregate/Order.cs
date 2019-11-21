@@ -25,8 +25,8 @@
             string cardHolderName,
             DateTime cardExpiration,
             int? buyerId = null,
-            int? paymentMethodId = null) : this()
-
+            int? paymentMethodId = null)
+            : this()
         {
             Address = address;
             BuyerId = buyerId;
@@ -75,11 +75,20 @@
             }
         }
 
-        public void SetPaymentId(int id) => PaymentMethodId = id;
+        public void SetPaymentId(int id)
+        {
+            PaymentMethodId = id;
+        }
 
-        public void SetBuyerId(int id) => BuyerId = id;
+        public void SetBuyerId(int id)
+        {
+            BuyerId = id;
+        }
 
-        public decimal GetTotal() => _orderItems.Sum(o => o.GetUnits() * o.GetUnitPrice());
+        public decimal GetTotal()
+        {
+            return _orderItems.Sum(o => o.GetUnits() * o.GetUnitPrice());
+        }
 
         public void SetAwaitingValidationStatus()
         {
@@ -166,6 +175,9 @@
             AddDomainEvent(evt);
         }
 
-        private void StatusChangeException(OrderStatus orderStatusToChange) => throw new OrderingDomainException($"Is not possible to change the order status from {OrderStatus.Name} to {orderStatusToChange.Name}.");
+        private void StatusChangeException(OrderStatus orderStatusToChange)
+        {
+            throw new OrderingDomainException($"Is not possible to change the order status from {OrderStatus.Name} to {orderStatusToChange.Name}.");
+        }
     }
 }
