@@ -5,17 +5,17 @@ using Xunit;
 
 namespace Ordering.UnitTests
 {
-    /* https:// osherove.com/blog/2005/4/3/naming-standards-for-unit-tests.html */
+    /* [UnitOfWork_StateUnderTest_ExpectedBehavior] https:// osherove.com/blog/2005/4/3/naming-standards-for-unit-tests.html */
 
     public class BuyerAggregateTests
     {
         [Fact]
-        public void Create_buyer_item_success()
+        public void CreateBuyer_WithValidParams_Success()  
         {
             // Arrange    
             var identity = Guid.NewGuid().ToString();
             var name = "fakeUser";
-
+             
             // Act 
             var buyer = new Buyer(identity, name);
 
@@ -24,18 +24,18 @@ namespace Ordering.UnitTests
         }
 
         [Fact]
-        public void Create_buyer_item_fail()
-        {
+        public void CreateBuyer_WithInvalidIdentity_ExceptionThrown()
+        { 
             // Arrange    
             var identity = string.Empty;
-            var name = "fakeUser";
+            var name = "fakeUser"; 
 
             // Act - Assert
             Assert.Throws<ArgumentNullException>(() => new Buyer(identity, name));
         }
 
         [Fact]
-        public void add_payment_success()
+        public void AddPaymentMethod_WithValidParams_Success()  
         {
             // Arrange    
             var cardTypeId = 1;
@@ -47,17 +47,17 @@ namespace Ordering.UnitTests
             var orderId = 1;
             var name = "fakeUser";
             var identity = Guid.NewGuid().ToString();
-            var fakeBuyerItem = new Buyer(identity, name);
+            var buyerItem = new Buyer(identity, name);
 
             // Act
-            var result = fakeBuyerItem.VerifyOrAddPaymentMethod(cardTypeId, alias, cardNumber, securityNumber, cardHolderName, expiration, orderId);
+            var result = buyerItem.VerifyOrAddPaymentMethod(cardTypeId, alias, cardNumber, securityNumber, cardHolderName, expiration, orderId);
 
             // Assert
             Assert.NotNull(result);
         }
 
-        [Fact]
-        public void create_payment_method_success()
+        [Fact] 
+        public void CreatePaymentMethod_WithValidParams_Success()
         {
             // Arrange    
             var cardTypeId = 1;
@@ -75,7 +75,7 @@ namespace Ordering.UnitTests
         }
 
         [Fact]
-        public void create_payment_method_expiration_fail()
+        public void CreatePaymentMethod_WithInvalidExpiration_Fail() 
         {
             // Arrange    
             var cardTypeId = 1;
@@ -90,7 +90,7 @@ namespace Ordering.UnitTests
         }
 
         [Fact]
-        public void payment_method_isEqualTo()
+        public void ComparePaymentMethod_WithSameInfo_Success() 
         {
             // Arrange    
             var cardTypeId = 1;
@@ -101,15 +101,15 @@ namespace Ordering.UnitTests
             var expiration = DateTime.Now.AddYears(1);
 
             // Act
-            var fakePaymentMethod = new PaymentMethod(cardTypeId, alias, cardNumber, securityNumber, cardHolderName, expiration);
-            var result = fakePaymentMethod.IsEqualTo(cardTypeId, cardNumber, expiration);
+            var paymentMethod = new PaymentMethod(cardTypeId, alias, cardNumber, securityNumber, cardHolderName, expiration);
+            var result = paymentMethod.IsEqualTo(cardTypeId, cardNumber, expiration);
 
             // Assert
             Assert.True(result);
         }
 
         [Fact]
-        public void Add_new_PaymentMethod_raises_new_event()
+        public void AddNewPaymentMethod_WithValidParams_RaisesNewEvent()  
         {
             // Arrange    
             var alias = "fakeAlias";
@@ -123,11 +123,11 @@ namespace Ordering.UnitTests
             var name = "fakeUser";
 
             // Act 
-            var fakeBuyer = new Buyer(Guid.NewGuid().ToString(), name);
-            fakeBuyer.VerifyOrAddPaymentMethod(cardTypeId, alias, cardNumber, cardSecurityNumber, cardHolderName, cardExpiration, orderId);
+            var buyer = new Buyer(Guid.NewGuid().ToString(), name);
+            buyer.VerifyOrAddPaymentMethod(cardTypeId, alias, cardNumber, cardSecurityNumber, cardHolderName, cardExpiration, orderId);
 
             // Assert
-            Assert.Equal(fakeBuyer.DomainEvents.Count, expectedResult);
+            Assert.Equal(buyer.DomainEvents.Count, expectedResult);
         }
     }
 }
