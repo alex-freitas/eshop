@@ -1,8 +1,8 @@
 using System;
-using Ordering.Domain.AggregatesModel.Builders;
 using Ordering.Domain.AggregatesModel.OrderAggregate;
 using Ordering.Domain.Events;
 using Ordering.Domain.Exceptions;
+using Ordering.UnitTests.Builders;
 using Xunit;
 
 namespace Ordering.UnitTests
@@ -94,7 +94,7 @@ namespace Ordering.UnitTests
         }
 
         [Fact]
-        public void when_add_two_times_on_the_same_item_then_the_total_of_order_should_be_the_sum_of_the_two_items()
+        public void When_add_two_times_on_the_same_item_then_the_total_of_order_should_be_the_sum_of_the_two_items()
         {
             // Arrange
             var address = AddressBuilder.Build();
@@ -122,7 +122,7 @@ namespace Ordering.UnitTests
             var cardNumber = "12";
             var cardSecurityNumber = "123";
             var cardHolderName = "FakeName";
-            var cardExpiration = DateTime.Now.AddYears(1);            
+            var cardExpiration = DateTime.Now.AddYears(1);
             var address = new Address(street, city, state, country, zipcode);
             var expectedResult = 1;
 
@@ -148,14 +148,14 @@ namespace Ordering.UnitTests
             var cardHolderName = "FakeName";
             var cardExpiration = DateTime.Now.AddYears(1);
             var address = new Address(street, city, state, country, zipcode);
-            
+
             var expectedResult = 2;
 
             // Act                         
             var order = new Order("1", "fakeName", address, cardTypeId, cardNumber, cardSecurityNumber, cardHolderName, cardExpiration);
             var @event = new OrderStartedDomainEvent(order, "fakeName", "1", cardTypeId, cardNumber, cardSecurityNumber, cardHolderName, cardExpiration);
             order.AddDomainEvent(@event);
-            
+
             // Assert
             Assert.Equal(order.DomainEvents.Count, expectedResult);
         }
@@ -182,7 +182,7 @@ namespace Ordering.UnitTests
             // Act         
             order.AddDomainEvent(@event);
             order.RemoveDomainEvent(@event);
-            
+
             // Assert
             Assert.Equal(order.DomainEvents.Count, expectedResult);
         }

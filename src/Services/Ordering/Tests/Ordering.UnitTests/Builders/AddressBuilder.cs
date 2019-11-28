@@ -1,6 +1,6 @@
 ﻿using Ordering.Domain.AggregatesModel.OrderAggregate;
 
-namespace Ordering.Domain.AggregatesModel.Builders
+namespace Ordering.UnitTests.Builders
 {
     public static class AddressBuilder
     {

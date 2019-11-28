@@ -10,12 +10,12 @@ namespace Ordering.UnitTests
     public class BuyerAggregateTests
     {
         [Fact]
-        public void CreateBuyer_WithValidParams_Success()  
+        public void CreateBuyer_WithValidParams_Success()
         {
             // Arrange    
             var identity = Guid.NewGuid().ToString();
             var name = "fakeUser";
-             
+
             // Act 
             var buyer = new Buyer(identity, name);
 
@@ -25,17 +25,17 @@ namespace Ordering.UnitTests
 
         [Fact]
         public void CreateBuyer_WithInvalidIdentity_ExceptionThrown()
-        { 
+        {
             // Arrange    
             var identity = string.Empty;
-            var name = "fakeUser"; 
+            var name = "fakeUser";
 
             // Act - Assert
             Assert.Throws<ArgumentNullException>(() => new Buyer(identity, name));
         }
 
         [Fact]
-        public void AddPaymentMethod_WithValidParams_Success()  
+        public void AddPaymentMethod_WithValidParams_Success()
         {
             // Arrange    
             var cardTypeId = 1;
@@ -56,7 +56,7 @@ namespace Ordering.UnitTests
             Assert.NotNull(result);
         }
 
-        [Fact] 
+        [Fact]
         public void CreatePaymentMethod_WithValidParams_Success()
         {
             // Arrange    
@@ -75,7 +75,7 @@ namespace Ordering.UnitTests
         }
 
         [Fact]
-        public void CreatePaymentMethod_WithInvalidExpiration_Fail() 
+        public void CreatePaymentMethod_WithInvalidExpiration_ExceptionThrown()
         {
             // Arrange    
             var cardTypeId = 1;
@@ -90,7 +90,7 @@ namespace Ordering.UnitTests
         }
 
         [Fact]
-        public void ComparePaymentMethod_WithSameInfo_Success() 
+        public void ComparePaymentMethod_WithSameInfo_Success()
         {
             // Arrange    
             var cardTypeId = 1;
@@ -109,7 +109,7 @@ namespace Ordering.UnitTests
         }
 
         [Fact]
-        public void AddNewPaymentMethod_WithValidParams_RaisesNewEvent()  
+        public void AddNewPaymentMethod_WithValidParams_RaisesNewEvent()
         {
             // Arrange    
             var alias = "fakeAlias";

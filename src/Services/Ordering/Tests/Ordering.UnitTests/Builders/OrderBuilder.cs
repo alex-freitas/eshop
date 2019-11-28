@@ -1,7 +1,7 @@
 ﻿using System;
 using Ordering.Domain.AggregatesModel.OrderAggregate;
 
-namespace Ordering.Domain.AggregatesModel.Builders
+namespace Ordering.UnitTests.Builders
 {
     public class OrderBuilder
     {
@@ -10,9 +10,9 @@ namespace Ordering.Domain.AggregatesModel.Builders
         public OrderBuilder(Address address)
         {
             _order = new Order(
-                "userId",
-                "fakeName",
-                address,
+                userId: "userId",
+                userName: "fakeName",
+                address: address,
                 cardTypeId: 5,
                 cardNumber: "12",
                 cardSecurityNumber: "123",
