@@ -12,17 +12,18 @@ namespace Ordering.Application.Commands.Handlers
     public class CreateOrderCommandHandler : IRequestHandler<CreateOrderCommand, bool>
     {
         private readonly IOrderRepository _orderRepository;
-        private readonly IOrderingIntegrationEventService _orderingIntegrationEventService;
-        private readonly ILogger<CreateOrderCommandHandler> _logger;
+        //private readonly IOrderingIntegrationEventService _orderingIntegrationEventService;
+        //private readonly ILogger<CreateOrderCommandHandler> _logger;
 
         public CreateOrderCommandHandler(
-            IOrderRepository orderRepository,
-            IOrderingIntegrationEventService orderingIntegrationEventService,
-            ILogger<CreateOrderCommandHandler> logger)
+            IOrderRepository orderRepository//,
+            //IOrderingIntegrationEventService orderingIntegrationEventService,
+            //ILogger<CreateOrderCommandHandler> logger
+            )
         {
             _orderRepository = orderRepository ?? throw new ArgumentNullException(nameof(orderRepository));
-            _orderingIntegrationEventService = orderingIntegrationEventService ?? throw new ArgumentNullException(nameof(orderingIntegrationEventService));
-            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+            //_orderingIntegrationEventService = orderingIntegrationEventService ?? throw new ArgumentNullException(nameof(orderingIntegrationEventService));
+            //_logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
         public async Task<bool> Handle(CreateOrderCommand request, CancellationToken cancellationToken)
@@ -34,7 +35,7 @@ namespace Ordering.Application.Commands.Handlers
 
             var orderStartedIntegrationEvent = new OrderStartedIntegrationEvent(request.UserId);
 
-            await _orderingIntegrationEventService.AddAndSaveEventAsync(orderStartedIntegrationEvent);
+            //await _orderingIntegrationEventService.AddAndSaveEventAsync(orderStartedIntegrationEvent);
 
             var address = new Address(request.Street, request.City, request.State, request.Country, request.ZipCode);
 
@@ -53,7 +54,7 @@ namespace Ordering.Application.Commands.Handlers
                 order.AddOrderItem(item.ProductId, item.ProductName, item.UnitPrice, item.Discount, item.PictureUrl, item.Units);
             }
 
-            _logger.LogInformation($"----- Creating Order - Order: {order}");
+            //_logger.LogInformation($"----- Creating Order - Order: {order}");
 
             _orderRepository.Add(order);
 

@@ -1,12 +1,15 @@
 using System;
+using MediatR;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.OpenApi.Models;
+using Ordering.Domain.AggregatesModel.OrderAggregate;
+using Ordering.Domain.SharedKernel;
+using Ordering.Infrasctructure.Repositories;
 
-namespace Ordering.Api
+namespace Ordering.WebApi
 {
     public class Startup
     {
@@ -21,34 +24,28 @@ namespace Ordering.Api
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllers();
+
             
-            services.AddSwaggerGen(c =>
-            {
-                c.SwaggerDoc("v1", 
-                    new OpenApiInfo 
-                    { 
-                        Title = "Ordering API", 
-                        Version = "v1" 
-                    });
-            });
+
+            services.AddTransient<IOrderRepository, OrderRepository>();
+
+            services.AddMediatR(AppDomain.CurrentDomain.Load("Ordering.Application"));
+
+
+            services.AddCustomDbContext(Configuration);
+
+            services.AddCustomSwagger(Configuration);
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
-            // var pathBase = Configuration["PATH_BASE"];
-
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
             }
 
-            app.UseSwagger();
-            app.UseSwaggerUI(c =>
-            {
-                c.SwaggerEndpoint("/swagger/v1/swagger.json", "Ordering API V1");
-                c.RoutePrefix = string.Empty;
-            });
+            app.UseHttpsRedirection();
 
             app.UseRouting();
 
@@ -57,6 +54,13 @@ namespace Ordering.Api
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
+            });
+
+            app.UseSwagger();
+            app.UseSwaggerUI(c =>
+            {
+                c.SwaggerEndpoint("/swagger/v1/swagger.json", "Ordering API V1");
+                c.RoutePrefix = string.Empty;
             });
         }
     }

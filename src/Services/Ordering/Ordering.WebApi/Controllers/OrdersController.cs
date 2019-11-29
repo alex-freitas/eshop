@@ -2,26 +2,25 @@
 using System.Threading.Tasks;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
 using Ordering.Application.Commands;
 
-namespace Ordering.Api.Controllers
+namespace Ordering.WebApi.Controllers
 {
-    [Route("api/[controller]")]
     [ApiController]
+    [Route("orders")]
     public class OrdersController : ControllerBase
     {
         private readonly IMediator _mediator;
-        private readonly ILogger<OrdersController> _logger;
 
-        public OrdersController(IMediator mediator, ILogger<OrdersController> logger)
+        public OrdersController(IMediator mediator)
         {
             _mediator = mediator ?? throw new ArgumentNullException(nameof(mediator));
-            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
+        [Route("create")]
+        [HttpPost]
         public async Task<ActionResult<bool>> CreateOrder([FromBody] CreateOrderCommand cmd)
-        {           
+        {
             return await _mediator.Send(cmd);
         }
     }
