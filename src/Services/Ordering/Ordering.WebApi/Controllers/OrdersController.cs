@@ -39,7 +39,7 @@ namespace Ordering.WebApi.Controllers
             }
             catch (Exception ex)
             {
-                return new InternalServerErrorObjectResult(ex);
+                return new InternalServerErrorObjectResult(ex.Message);
             }
         }
 
