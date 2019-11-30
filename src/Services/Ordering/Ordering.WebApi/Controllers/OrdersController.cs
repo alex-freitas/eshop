@@ -45,9 +45,9 @@ namespace Ordering.WebApi.Controllers
 
         [Route("create")]
         [HttpPost]
-        public async Task<ActionResult<bool>> CreateOrder([FromBody] CreateOrderCommand cmd)
+        public async Task<ActionResult<bool>> CreateOrder([FromBody] CreateOrderCommand command)
         {
-            return await _mediator.Send(cmd);
+            return await _mediator.Send(command);
         }
     }
 }

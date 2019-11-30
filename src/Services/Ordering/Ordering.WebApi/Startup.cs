@@ -1,10 +1,8 @@
-using MediatR;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Ordering.Application.Commands;
 using Ordering.Application.Queries;
 using Ordering.Domain.AggregatesModel.OrderAggregate;
 using Ordering.Infrasctructure.Repositories;
@@ -27,12 +25,10 @@ namespace Ordering.WebApi
             services.AddTransient<IOrderRepository, OrderRepository>();
             services.AddTransient<IOrderQueries>(x => new OrderQueries(Configuration["ConnectionString"]));
 
-            services.AddCustomInMemoryDbContext(Configuration);
-
-            var assembly = typeof(CreateOrderCommand).Assembly;
-            services.AddMediatR(assembly);
-
-            services.AddCustomSwagger(Configuration);
+            services
+                .AddCustomInMemoryDbContext(Configuration)
+                .AddCustomMediatR()
+                .AddCustomSwagger(Configuration);
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)

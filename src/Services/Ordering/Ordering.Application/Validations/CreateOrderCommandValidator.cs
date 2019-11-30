@@ -18,14 +18,13 @@ namespace Ordering.Application.Validations
             RuleFor(command => command.ZipCode).NotEmpty();
             RuleFor(command => command.CardNumber).NotEmpty().Length(12, 19);
             RuleFor(command => command.CardHolderName).NotEmpty();
+            RuleFor(command => command.CardSecurityNumber).NotEmpty().Length(3);
+            RuleFor(command => command.CardTypeId).NotEmpty();
 
             RuleFor(command => command.CardExpiration)
                 .NotEmpty()
                 .Must(BeValidExpirationDate)
                 .WithMessage("Please specify a valid card expiration date");
-
-            RuleFor(command => command.CardSecurityNumber).NotEmpty().Length(3);
-            RuleFor(command => command.CardTypeId).NotEmpty();
 
             RuleFor(command => command.OrderItems)
                 .Must(ContainOrderItems)
