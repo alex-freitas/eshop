@@ -44,5 +44,15 @@ namespace Ordering.WebApi
 
             return services;
         }
+
+        public static IServiceCollection AddCustomInMemoryDbContext(this IServiceCollection services, IConfiguration configuration)
+        {
+            services.AddDbContext<OrderingContext>(options =>
+            {
+                options.UseInMemoryDatabase("EShop.Ordering");
+            });
+
+            return services;
+        }
     }
 }

@@ -1,12 +1,12 @@
-using System;
 using MediatR;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Ordering.Application.Commands;
+using Ordering.Application.Queries;
 using Ordering.Domain.AggregatesModel.OrderAggregate;
-using Ordering.Domain.SharedKernel;
 using Ordering.Infrasctructure.Repositories;
 
 namespace Ordering.WebApi
@@ -20,24 +20,21 @@ namespace Ordering.WebApi
 
         public IConfiguration Configuration { get; }
 
-        // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllers();
 
-            
-
             services.AddTransient<IOrderRepository, OrderRepository>();
+            services.AddTransient<IOrderQueries>(x => new OrderQueries(Configuration["ConnectionString"]));
 
-            services.AddMediatR(AppDomain.CurrentDomain.Load("Ordering.Application"));
+            services.AddCustomInMemoryDbContext(Configuration);
 
-
-            services.AddCustomDbContext(Configuration);
+            var assembly = typeof(CreateOrderCommand).Assembly;
+            services.AddMediatR(assembly);
 
             services.AddCustomSwagger(Configuration);
         }
 
-        // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             if (env.IsDevelopment())

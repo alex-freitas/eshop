@@ -69,9 +69,10 @@ namespace Ordering.UnitTests.Application.Commands.Handlers
         private CreateOrderCommandHandler NewCreateOrderCommandHandler()
         {
             return new CreateOrderCommandHandler(
-                _orderRepositoryMock.Object,                
-                _orderingIntegrationEventService.Object,
-                _loggerMock.Object);
+                _orderRepositoryMock.Object//,                
+                //_orderingIntegrationEventService.Object,
+                //_loggerMock.Object
+                );
         }
 
         private CreateOrderCommand NewCreateOrderCommand(Dictionary<string, object> args = null)

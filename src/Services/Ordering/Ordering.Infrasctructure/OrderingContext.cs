@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Threading;
 using System.Threading.Tasks;
 using MediatR;
@@ -6,6 +7,7 @@ using Microsoft.EntityFrameworkCore;
 using Ordering.Domain.AggregatesModel.BuyerAggregate;
 using Ordering.Domain.AggregatesModel.OrderAggregate;
 using Ordering.Domain.SharedKernel;
+using Ordering.Infrasctructure.EntityConfigurations;
 
 namespace Ordering.Infrasctructure
 {
@@ -18,9 +20,11 @@ namespace Ordering.Infrasctructure
         public OrderingContext(DbContextOptions<OrderingContext> options, IMediator mediator) : base(options)
         {
             _mediator = mediator ?? throw new ArgumentNullException(nameof(mediator));
-            //System.Diagnostics.Debug.WriteLine("OrderingContext::ctor ->" + this.GetHashCode());
+            
+            Debug.WriteLine("OrderingContext::ctor ->" + GetHashCode());
         }
 
+        // duvida
         private OrderingContext(DbContextOptions<OrderingContext> options) : base(options) { }
 
         public DbSet<Order> Orders { get; set; }
@@ -32,9 +36,21 @@ namespace Ordering.Infrasctructure
 
         public async Task<bool> SaveEntitiesAsync(CancellationToken cancellationToken = default)
         {
-            _ = await base.SaveChangesAsync(cancellationToken);
+            // await _mediator.DispatchDomainEventsAsync(this);
 
+            _ = await base.SaveChangesAsync(cancellationToken);
+            
             return true;
+        }
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            modelBuilder.ApplyConfiguration(new PaymentMethodEntityTypeConfiguration());
+            modelBuilder.ApplyConfiguration(new OrderEntityTypeConfiguration());
+            modelBuilder.ApplyConfiguration(new OrderItemEntityTypeConfiguration());
+            modelBuilder.ApplyConfiguration(new CardTypeEntityTypeConfiguration());
+            modelBuilder.ApplyConfiguration(new OrderStatusEntityTypeConfiguration());
+            modelBuilder.ApplyConfiguration(new BuyerEntityTypeConfiguration());
         }
     }
 }

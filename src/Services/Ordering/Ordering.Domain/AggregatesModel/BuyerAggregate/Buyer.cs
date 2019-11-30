@@ -26,6 +26,8 @@ namespace Ordering.Domain.AggregatesModel.BuyerAggregate
 
         public string Name { get; private set; }
 
+        public IEnumerable<PaymentMethod> PaymentMethods => _paymentMethods.AsReadOnly();
+
         public PaymentMethod VerifyOrAddPaymentMethod(
             int cardTypeId,
             string alias,

@@ -2,8 +2,6 @@
 using System.Threading;
 using System.Threading.Tasks;
 using MediatR;
-using Microsoft.Extensions.Logging;
-using Ordering.Application.IntegrationsEvents;
 using Ordering.Application.IntegrationsEvents.Events;
 using Ordering.Domain.AggregatesModel.OrderAggregate;
 
@@ -17,8 +15,8 @@ namespace Ordering.Application.Commands.Handlers
 
         public CreateOrderCommandHandler(
             IOrderRepository orderRepository//,
-            //IOrderingIntegrationEventService orderingIntegrationEventService,
-            //ILogger<CreateOrderCommandHandler> logger
+                                            //IOrderingIntegrationEventService orderingIntegrationEventService,
+                                            //ILogger<CreateOrderCommandHandler> logger
             )
         {
             _orderRepository = orderRepository ?? throw new ArgumentNullException(nameof(orderRepository));
