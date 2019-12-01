@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using Ordering.Domain.AggregatesModel.BuyerAggregate;
 using Ordering.Domain.SharedKernel;
 
-namespace Ordering.Infrasctructure.Repositories
+namespace Ordering.Infrastructure.Repositories
 {
     public class BuyerRepository : IBuyerRepository
     {

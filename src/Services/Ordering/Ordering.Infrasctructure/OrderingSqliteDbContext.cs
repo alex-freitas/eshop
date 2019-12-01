@@ -1,5 +1,8 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
+using System.Reflection;
+using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using MediatR;
@@ -11,21 +14,16 @@ using Ordering.Infrastructure.EntityConfigurations;
 
 namespace Ordering.Infrastructure
 {
-    public class OrderingContext : DbContext, IUnitOfWork
+    public class OrderingSqliteDbContext : DbContext, IUnitOfWork
     {
-        public const string DEFAULT_SCHEMA = "ordering";
-
         private readonly IMediator _mediator;
-        
-        public OrderingContext(DbContextOptions<OrderingContext> options, IMediator mediator) : base(options)
+
+        public OrderingSqliteDbContext(DbContextOptions<OrderingContext> options, IMediator mediator) : base(options)
         {
             _mediator = mediator ?? throw new ArgumentNullException(nameof(mediator));
-            
-            Debug.WriteLine("OrderingContext::ctor ->" + GetHashCode());
-        }
 
-        // duvida
-        private OrderingContext(DbContextOptions<OrderingContext> options) : base(options) { }
+            Debug.WriteLine("OrderingContext::ctor ->" + GetHashCode()); 
+        }
 
         public DbSet<Order> Orders { get; set; }
         public DbSet<OrderItem> OrderItems { get; set; }
@@ -36,12 +34,20 @@ namespace Ordering.Infrastructure
 
         public async Task<bool> SaveEntitiesAsync(CancellationToken cancellationToken = default)
         {
-            // await _mediator.DispatchDomainEventsAsync(this);
-
             _ = await base.SaveChangesAsync(cancellationToken);
-            
+
             return true;
         }
+
+        //protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        //{
+        //    optionsBuilder.UseSqlite("Filename=ordering.db", options =>
+        //    {
+        //        options.MigrationsAssembly(Assembly.GetExecutingAssembly().FullName);
+        //    });
+
+        //    base.OnConfiguring(optionsBuilder);
+        //}
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -51,6 +57,8 @@ namespace Ordering.Infrastructure
             modelBuilder.ApplyConfiguration(new CardTypeEntityTypeConfiguration());
             modelBuilder.ApplyConfiguration(new OrderStatusEntityTypeConfiguration());
             modelBuilder.ApplyConfiguration(new BuyerEntityTypeConfiguration());
+
+            base.OnModelCreating(modelBuilder);
         }
     }
 }

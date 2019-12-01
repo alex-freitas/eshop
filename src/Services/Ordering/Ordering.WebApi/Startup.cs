@@ -5,7 +5,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Ordering.Application.Queries;
 using Ordering.Domain.AggregatesModel.OrderAggregate;
-using Ordering.Infrasctructure.Repositories;
+using Ordering.Infrastructure.Repositories;
 
 namespace Ordering.WebApi
 {
@@ -23,10 +23,10 @@ namespace Ordering.WebApi
             services.AddControllers();
 
             services.AddTransient<IOrderRepository, OrderRepository>();
-            services.AddTransient<IOrderQueries>(x => new OrderQueries(Configuration["ConnectionString"]));
+            services.AddTransient<IOrderQueries>(x => new OrderSqliteQueries(Configuration["ConnectionString"]));
 
             services
-                .AddCustomInMemoryDbContext(Configuration)
+                .AddCustomSqliteDbContext(Configuration)
                 .AddCustomMediatR()
                 .AddCustomSwagger(Configuration);
         }

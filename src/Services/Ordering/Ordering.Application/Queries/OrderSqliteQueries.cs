@@ -2,22 +2,22 @@
 {
     using System;
     using System.Collections.Generic;
-    using System.Data.SqlClient;
     using System.Threading.Tasks;
     using Dapper;
+    using Microsoft.Data.Sqlite;
 
-    public class OrderQueries : IOrderQueries
+    public class OrderSqliteQueries : IOrderQueries
     {
         private readonly string _connectionString;
 
-        public OrderQueries(string connectionString)
+        public OrderSqliteQueries(string connectionString)
         {
             _connectionString = !string.IsNullOrWhiteSpace(connectionString) ? connectionString : throw new ArgumentNullException(nameof(connectionString));
         }
 
         public async Task<IEnumerable<Order>> GetOrdersAsync()
         {
-            using (var connection = new SqlConnection(_connectionString))
+            using (var connection = new SqliteConnection(_connectionString))
             {
                 connection.Open();
 
@@ -44,7 +44,7 @@ LEFT JOIN ordering.orderstatus os on o.OrderStatusId = os.Id
 
         public async Task<Order> GetOrderAsync(int id)
         {
-            using (var connection = new SqlConnection(_connectionString))
+            using (var connection = new SqliteConnection(_connectionString))
             {
                 connection.Open();
 

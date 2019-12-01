@@ -7,7 +7,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.OpenApi.Models;
 using Ordering.Application.Behaviors;
 using Ordering.Application.Commands;
-using Ordering.Infrasctructure;
+using Ordering.Infrastructure;
 
 namespace Ordering.WebApi
 {
@@ -30,7 +30,7 @@ namespace Ordering.WebApi
         public static IServiceCollection AddCustomDbContext(this IServiceCollection services, IConfiguration configuration)
         {
             //var migrationsAssembly = typeof(OrderingContext).GetTypeInfo().Assembly.GetName().Name; 
-            var migrationsAssembly = "Ordering.Infrasctructure";
+            var migrationsAssembly = "Ordering.Infrastructure";
 
             services.AddEntityFrameworkSqlServer();
 
@@ -54,6 +54,21 @@ namespace Ordering.WebApi
             services.AddDbContext<OrderingContext>(options =>
             {
                 options.UseInMemoryDatabase("EShop.Ordering");
+            });
+
+            return services;
+        }
+
+        public static IServiceCollection AddCustomSqliteDbContext(this IServiceCollection services, IConfiguration configuration)
+        {
+            services.AddDbContext<OrderingSqliteDbContext>(options =>
+            {
+                options.UseSqlite(
+                    configuration["ConnectionString"],
+                    sqlOptions =>
+                    {
+                        sqlOptions.MigrationsAssembly("Ordering.Infrastructure");
+                    });
             });
 
             return services;

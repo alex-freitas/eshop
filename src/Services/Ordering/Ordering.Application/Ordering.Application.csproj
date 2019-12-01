@@ -35,10 +35,7 @@
   <ItemGroup>
     <ProjectReference Include="..\..\..\BuildingBlocks\EventBus\EventBus\EventBus.csproj" />
     <ProjectReference Include="..\Ordering.Domain\Ordering.Domain.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="DomainEventHandlers\" />
+    <ProjectReference Include="..\Ordering.Infrasctructure\Ordering.Infrastructure.csproj" />
   </ItemGroup>
 
 </Project>

@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 using MediatR;
 using Ordering.Domain.SharedKernel;
 
-namespace Ordering.Infrasctructure
+namespace Ordering.Infrastructure
 {
     internal static class MediatorExtensions
     {

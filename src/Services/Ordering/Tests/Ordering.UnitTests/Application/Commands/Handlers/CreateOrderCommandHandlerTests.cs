@@ -18,7 +18,7 @@ namespace Ordering.UnitTests.Application.Commands.Handlers
         private readonly MockRepository _mockRepository;
 
         private readonly Mock<IOrderRepository> _orderRepositoryMock;       
-        private readonly Mock<IOrderingIntegrationEventService> _orderingIntegrationEventService;
+        private readonly Mock<IOrderingIntegrationEventService> _orderingIntegrationEventServiceMock;
         private readonly Mock<ILogger<CreateOrderCommandHandler>> _loggerMock;
 
         public CreateOrderCommandHandlerTests()
@@ -26,7 +26,7 @@ namespace Ordering.UnitTests.Application.Commands.Handlers
             _mockRepository = new MockRepository(MockBehavior.Default);
 
             _orderRepositoryMock = _mockRepository.Create<IOrderRepository>();          
-            _orderingIntegrationEventService = _mockRepository.Create<IOrderingIntegrationEventService>();
+            _orderingIntegrationEventServiceMock = _mockRepository.Create<IOrderingIntegrationEventService>();
             _loggerMock = _mockRepository.Create<ILogger<CreateOrderCommandHandler>>();            
         }             
 
@@ -69,10 +69,9 @@ namespace Ordering.UnitTests.Application.Commands.Handlers
         private CreateOrderCommandHandler NewCreateOrderCommandHandler()
         {
             return new CreateOrderCommandHandler(
-                _orderRepositoryMock.Object//,                
-                //_orderingIntegrationEventService.Object,
-                //_loggerMock.Object
-                );
+                _orderRepositoryMock.Object,                
+                _orderingIntegrationEventServiceMock.Object,
+                _loggerMock.Object);
         }
 
         private CreateOrderCommand NewCreateOrderCommand(Dictionary<string, object> args = null)

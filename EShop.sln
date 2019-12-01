@@ -25,9 +25,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EventBus", "src\BuildingBlo
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Ordering.Api", "src\Services\Ordering\Ordering.Api\Ordering.Api.csproj", "{3E1CBC87-DE64-47E4-ABC1-3C99BDEB77E0}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ordering.WebApi", "src\Services\Ordering\Ordering.WebApi\Ordering.WebApi.csproj", "{3446589C-E8A6-4F20-BBF1-D45CC96CAF50}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Ordering.WebApi", "src\Services\Ordering\Ordering.WebApi\Ordering.WebApi.csproj", "{3446589C-E8A6-4F20-BBF1-D45CC96CAF50}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ordering.Infrasctructure", "src\Services\Ordering\Ordering.Infrasctructure\Ordering.Infrasctructure.csproj", "{C031FF63-4BAC-4357-A944-58AA33F48874}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Ordering.Infrastructure", "src\Services\Ordering\Ordering.Infrasctructure\Ordering.Infrastructure.csproj", "{C031FF63-4BAC-4357-A944-58AA33F48874}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
