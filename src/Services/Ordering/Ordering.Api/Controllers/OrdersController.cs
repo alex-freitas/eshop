@@ -21,7 +21,7 @@ namespace Ordering.Api.Controllers
         }
 
         public async Task<ActionResult<bool>> CreateOrder([FromBody] CreateOrderCommand cmd)
-        {           
+        {
             return await _mediator.Send(cmd);
         }
     }

@@ -9,14 +9,12 @@ using Ordering.Application.Models;
 
 namespace Ordering.Application.Commands
 {
+    [DataContract]
     public class CreateOrderCommand : IRequest<bool>
     {
-        [DataMember]
-        private readonly List<OrderItemDto> _orderItems;
-
         public CreateOrderCommand()
         {
-            _orderItems = new List<OrderItemDto>();
+            OrderItems = new List<OrderItemDto>();
         }
 
         public CreateOrderCommand(
@@ -35,7 +33,7 @@ namespace Ordering.Application.Commands
             int cardTypeId)
             : this()
         {
-            _orderItems = basketItems.ToOrderItemsDto().ToList();
+            OrderItems = basketItems.ToOrderItemsDto().ToList();
             UserId = userId;
             UserName = userName;
             City = city;
@@ -52,42 +50,43 @@ namespace Ordering.Application.Commands
         }
 
         [DataMember]
-        public string UserId { get; private set; }
+        public string UserId { get; set; }
 
         [DataMember]
-        public string UserName { get; private set; }
+        public string UserName { get; set; }
 
         [DataMember]
-        public string City { get; private set; }
+        public string City { get; set; }
 
         [DataMember]
-        public string Street { get; private set; }
+        public string Street { get; set; }
 
         [DataMember]
-        public string State { get; private set; }
+        public string State { get; set; }
 
         [DataMember]
-        public string Country { get; private set; }
+        public string Country { get; set; }
 
         [DataMember]
-        public string ZipCode { get; private set; }
+        public string ZipCode { get; set; }
 
         [DataMember]
-        public string CardNumber { get; private set; }
+        public string CardNumber { get; set; }
 
         [DataMember]
-        public string CardHolderName { get; private set; }
+        public string CardHolderName { get; set; }
 
         [DataMember]
-        public DateTime CardExpiration { get; private set; }
+        public DateTime CardExpiration { get; set; }
 
         [DataMember]
-        public string CardSecurityNumber { get; private set; }
+        public string CardSecurityNumber { get; set; }
 
         [DataMember]
-        public int CardTypeId { get; private set; }
+        public int CardTypeId { get; set; }
 
         [DataMember]
-        public IEnumerable<OrderItemDto> OrderItems => _orderItems;
+        public List<OrderItemDto> OrderItems { get; set; }
+
     }
 }

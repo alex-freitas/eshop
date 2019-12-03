@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Threading.Tasks;
 using Ordering.Domain.AggregatesModel.OrderAggregate;
 using Ordering.Domain.SharedKernel;
@@ -9,14 +7,14 @@ namespace Ordering.Infrastructure.Repositories
 {
     public class OrderSqliteRepository : IOrderRepository
     {
-        private readonly OrderingContext _context;
+        private readonly OrderingSqliteDbContext _context;
 
-        public OrderSqliteRepository(OrderingContext context)
+        public OrderSqliteRepository(OrderingSqliteDbContext context)
         {
             _context = context ?? throw new ArgumentNullException(nameof(context));
         }
 
-        public IUnitOfWork UnitOfWork => _context; 
+        public IUnitOfWork UnitOfWork => _context;
 
         public async Task<Order> GetAsync(int orderId)
         {
@@ -39,6 +37,4 @@ namespace Ordering.Infrastructure.Repositories
             // duvida
         }
     }
-
-
 }

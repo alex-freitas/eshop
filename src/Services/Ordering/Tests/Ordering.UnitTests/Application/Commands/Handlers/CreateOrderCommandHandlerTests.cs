@@ -13,11 +13,11 @@ using Xunit;
 
 namespace Ordering.UnitTests.Application.Commands.Handlers
 {
-    public class CreateOrderCommandHandlerTests 
+    public class CreateOrderCommandHandlerTests
     {
         private readonly MockRepository _mockRepository;
 
-        private readonly Mock<IOrderRepository> _orderRepositoryMock;       
+        private readonly Mock<IOrderRepository> _orderRepositoryMock;
         private readonly Mock<IOrderingIntegrationEventService> _orderingIntegrationEventServiceMock;
         private readonly Mock<ILogger<CreateOrderCommandHandler>> _loggerMock;
 
@@ -25,10 +25,10 @@ namespace Ordering.UnitTests.Application.Commands.Handlers
         {
             _mockRepository = new MockRepository(MockBehavior.Default);
 
-            _orderRepositoryMock = _mockRepository.Create<IOrderRepository>();          
+            _orderRepositoryMock = _mockRepository.Create<IOrderRepository>();
             _orderingIntegrationEventServiceMock = _mockRepository.Create<IOrderingIntegrationEventService>();
-            _loggerMock = _mockRepository.Create<ILogger<CreateOrderCommandHandler>>();            
-        }             
+            _loggerMock = _mockRepository.Create<ILogger<CreateOrderCommandHandler>>();
+        }
 
         [Fact]
         public async Task Handle_WithNullRequest_ReturnFalse()
@@ -46,10 +46,10 @@ namespace Ordering.UnitTests.Application.Commands.Handlers
         }
 
         [Fact]
-        public async Task Handle_IfOrderIsNotPersisted_ReturnFalse() 
+        public async Task Handle_IfOrderIsNotPersisted_ReturnFalse()
         {
             // Arrange
-            var handler = NewCreateOrderCommandHandler();        
+            var handler = NewCreateOrderCommandHandler();
 
             var createOrderCmd = NewCreateOrderCommand(new Dictionary<string, object>
             {
@@ -58,7 +58,7 @@ namespace Ordering.UnitTests.Application.Commands.Handlers
 
             _orderRepositoryMock.Setup(x => x.UnitOfWork.SaveChangesAsync(default))
                 .Returns(Task.FromResult(1));
-  
+
             // Act
             var result = await handler.Handle(createOrderCmd, default);
 
@@ -69,7 +69,7 @@ namespace Ordering.UnitTests.Application.Commands.Handlers
         private CreateOrderCommandHandler NewCreateOrderCommandHandler()
         {
             return new CreateOrderCommandHandler(
-                _orderRepositoryMock.Object,                
+                _orderRepositoryMock.Object,
                 _orderingIntegrationEventServiceMock.Object,
                 _loggerMock.Object);
         }

@@ -3,9 +3,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Ordering.Application.Queries;
-using Ordering.Domain.AggregatesModel.OrderAggregate;
-using Ordering.Infrastructure.Repositories;
+using Ordering.Application.IntegrationsEvents;
 
 namespace Ordering.WebApi
 {
@@ -21,14 +19,13 @@ namespace Ordering.WebApi
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllers();
-
-            services.AddTransient<IOrderRepository, OrderRepository>();
-            services.AddTransient<IOrderQueries>(x => new OrderSqliteQueries(Configuration["ConnectionString"]));
+            
+            services.AddTransient<IOrderingIntegrationEventService, OrderingIntegrationEventService>();
 
             services
                 .AddCustomSqliteDbContext(Configuration)
                 .AddCustomMediatR()
-                .AddCustomSwagger(Configuration);
+                .AddCustomSwashbuckleSwagger(Configuration);
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
@@ -49,12 +46,7 @@ namespace Ordering.WebApi
                 endpoints.MapControllers();
             });
 
-            app.UseSwagger();
-            app.UseSwaggerUI(c =>
-            {
-                c.SwaggerEndpoint("/swagger/v1/swagger.json", "Ordering API V1");
-                c.RoutePrefix = string.Empty;
-            });
+            app.UseCustomSwashbuckleSwagger();
         }
     }
 }

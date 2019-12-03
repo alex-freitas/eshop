@@ -1,8 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.Reflection;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using MediatR;
@@ -10,7 +7,7 @@ using Microsoft.EntityFrameworkCore;
 using Ordering.Domain.AggregatesModel.BuyerAggregate;
 using Ordering.Domain.AggregatesModel.OrderAggregate;
 using Ordering.Domain.SharedKernel;
-using Ordering.Infrastructure.EntityConfigurations;
+using Ordering.Infrastructure.EntityConfigurations.Sqlite;
 
 namespace Ordering.Infrastructure
 {
@@ -18,11 +15,13 @@ namespace Ordering.Infrastructure
     {
         private readonly IMediator _mediator;
 
-        public OrderingSqliteDbContext(DbContextOptions<OrderingContext> options, IMediator mediator) : base(options)
+        public OrderingSqliteDbContext(DbContextOptions<OrderingSqliteDbContext> options, IMediator mediator) : base(options)
         {
             _mediator = mediator ?? throw new ArgumentNullException(nameof(mediator));
 
-            Debug.WriteLine("OrderingContext::ctor ->" + GetHashCode()); 
+            Database.EnsureCreated();
+
+            Debug.WriteLine($"OrderingSqliteDbContext::ctor ->" + GetHashCode());
         }
 
         public DbSet<Order> Orders { get; set; }

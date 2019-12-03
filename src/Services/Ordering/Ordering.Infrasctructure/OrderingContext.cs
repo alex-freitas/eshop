@@ -16,11 +16,11 @@ namespace Ordering.Infrastructure
         public const string DEFAULT_SCHEMA = "ordering";
 
         private readonly IMediator _mediator;
-        
+
         public OrderingContext(DbContextOptions<OrderingContext> options, IMediator mediator) : base(options)
         {
             _mediator = mediator ?? throw new ArgumentNullException(nameof(mediator));
-            
+
             Debug.WriteLine("OrderingContext::ctor ->" + GetHashCode());
         }
 
@@ -39,7 +39,7 @@ namespace Ordering.Infrastructure
             // await _mediator.DispatchDomainEventsAsync(this);
 
             _ = await base.SaveChangesAsync(cancellationToken);
-            
+
             return true;
         }
 

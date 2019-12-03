@@ -105,7 +105,7 @@ namespace Ordering.Infrastructure.EntityConfigurations
 
             builder.Ignore(b => b.DomainEvents);
 
-            builder.Property(b => b.Id).UseHiLo("paymentseq", OrderingContext.DEFAULT_SCHEMA);
+            //builder.Property(b => b.Id).UseHiLo("paymentseq", OrderingContext.DEFAULT_SCHEMA);
 
             builder.Property<int>("BuyerId").IsRequired();
 
@@ -148,7 +148,7 @@ namespace Ordering.Infrastructure.EntityConfigurations
 
             builder.Property(ct => ct.Name)
                 .HasMaxLength(200)
-                .IsRequired();     
+                .IsRequired();
         }
     }
 
@@ -162,7 +162,7 @@ namespace Ordering.Infrastructure.EntityConfigurations
 
             builder.Ignore(b => b.DomainEvents);
 
-            builder.Property(b => b.Id).UseHiLo("buyerseq", OrderingContext.DEFAULT_SCHEMA);
+            //builder.Property(b => b.Id).UseHiLo("buyerseq", OrderingContext.DEFAULT_SCHEMA);
 
             builder.Property(b => b.IdentityGuid)
                 .HasMaxLength(200)
