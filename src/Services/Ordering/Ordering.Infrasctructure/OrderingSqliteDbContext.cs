@@ -26,10 +26,15 @@ namespace Ordering.Infrastructure
         }
 
         public DbSet<Order> Orders { get; set; }
+        
         public DbSet<OrderItem> OrderItems { get; set; }
+        
         public DbSet<PaymentMethod> Payments { get; set; }
+        
         public DbSet<Buyer> Buyers { get; set; }
+        
         public DbSet<CardType> CardTypes { get; set; }
+        
         public DbSet<OrderStatus> OrderStatus { get; set; }
 
         public async Task<bool> SaveEntitiesAsync(CancellationToken cancellationToken = default)
@@ -38,7 +43,7 @@ namespace Ordering.Infrastructure
             {
                 _ = await base.SaveChangesAsync(cancellationToken);
 
-                await _mediator.DispatchDomainEventsAsync(this);
+                //await _mediator.DispatchDomainEventsAsync(this);
 
                 return true;
             }
@@ -60,12 +65,14 @@ namespace Ordering.Infrastructure
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.ApplyConfiguration(new PaymentMethodEntityTypeConfiguration());
             modelBuilder.ApplyConfiguration(new OrderEntityTypeConfiguration());
             modelBuilder.ApplyConfiguration(new OrderItemEntityTypeConfiguration());
+            
+            modelBuilder.ApplyConfiguration(new BuyerEntityTypeConfiguration());
+            modelBuilder.ApplyConfiguration(new PaymentMethodEntityTypeConfiguration());
+
             modelBuilder.ApplyConfiguration(new CardTypeEntityTypeConfiguration());
             modelBuilder.ApplyConfiguration(new OrderStatusEntityTypeConfiguration());
-            modelBuilder.ApplyConfiguration(new BuyerEntityTypeConfiguration());
 
             base.OnModelCreating(modelBuilder);
         }

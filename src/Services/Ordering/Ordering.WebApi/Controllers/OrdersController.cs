@@ -86,7 +86,7 @@ namespace Ordering.WebApi.Controllers
         ///     }
         ///
         /// </remarks>
-        /// <param name="item"></param>
+        /// <param name="command"></param>
         /// <returns>A newly created TodoItem</returns>
         /// <response code="200">True if success</response>
         /// <response code="400">If the item is null</response>

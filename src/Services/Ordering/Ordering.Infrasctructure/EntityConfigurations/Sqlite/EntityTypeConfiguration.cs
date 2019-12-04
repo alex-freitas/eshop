@@ -15,6 +15,7 @@ namespace Ordering.Infrastructure.EntityConfigurations.Sqlite
             builder.HasKey(o => o.Id);
 
             builder.Ignore(o => o.DomainEvents);
+            builder.Ignore(o => o.OrderStatus);
 
             builder.Property(o => o.Id).ValueGeneratedOnAdd();
 
@@ -27,8 +28,7 @@ namespace Ordering.Infrastructure.EntityConfigurations.Sqlite
             builder.Property<string>("Description").IsRequired(false);
 
             var navigation = builder.Metadata.FindNavigation(nameof(Order.OrderItems));
-
-            // duvida
+            
             navigation.SetPropertyAccessMode(PropertyAccessMode.Field);
 
             builder.HasOne<PaymentMethod>()
@@ -40,11 +40,11 @@ namespace Ordering.Infrastructure.EntityConfigurations.Sqlite
             builder.HasOne<Buyer>()
                 .WithMany()
                 .IsRequired()
-                .HasForeignKey("BuyerId"); 
+                .HasForeignKey("BuyerId");
 
-            builder.HasOne(o => o.OrderStatus)
-                .WithMany()
-                .HasForeignKey("OrderStatusId");
+            //builder.HasOne(o => o.OrderStatus)
+            //    .WithMany()
+            //    .HasForeignKey("OrderStatusId");
         }
     }
 
@@ -183,6 +183,4 @@ namespace Ordering.Infrastructure.EntityConfigurations.Sqlite
             navigation.SetPropertyAccessMode(PropertyAccessMode.Field);
         }
     }
-
-    //internal class ClientRequestEntityTypeConfiguration : IEntityTypeConfiguration<ClientRequest> 
 }

@@ -45,9 +45,9 @@
 
         public int? PaymentMethodId { get; private set; }
 
-        public Address Address { get; private set; }
-
         public int? BuyerId { get; private set; }
+
+        public Address Address { get; private set; }
 
         public OrderStatus OrderStatus { get; private set; }
 
