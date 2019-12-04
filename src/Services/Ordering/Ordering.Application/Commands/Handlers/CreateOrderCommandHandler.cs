@@ -27,7 +27,9 @@ namespace Ordering.Application.Commands.Handlers
 
         public async Task<bool> Handle(CreateOrderCommand request, CancellationToken cancellationToken)
         {
-            await _orderingIntegrationEventService.AddAndSaveEventAsync(new OrderStartedIntegrationEvent(request.UserId));
+            var orderStartedIntegrationEvent = new OrderStartedIntegrationEvent(request.UserId);
+
+            await _orderingIntegrationEventService.AddAndSaveEventAsync(orderStartedIntegrationEvent);
 
             var address = new Address(request.Street, request.City, request.State, request.Country, request.ZipCode);
 
@@ -43,7 +45,7 @@ namespace Ordering.Application.Commands.Handlers
 
             foreach (var item in request.OrderItems)
             {
-                order.AddOrderItem(item.ProductId, item.ProductName, item.UnitPrice, item.Discount, item.PictureUrl, item.Units);
+                //order.AddOrderItem(item.ProductId, item.ProductName, item.UnitPrice, item.Discount, item.PictureUrl, item.Units);
             }
 
             _logger.LogInformation($"----- Creating Order - Order: {order}");

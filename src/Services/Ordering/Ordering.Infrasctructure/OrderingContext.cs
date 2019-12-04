@@ -8,6 +8,7 @@ using Ordering.Domain.AggregatesModel.BuyerAggregate;
 using Ordering.Domain.AggregatesModel.OrderAggregate;
 using Ordering.Domain.SharedKernel;
 using Ordering.Infrastructure.EntityConfigurations;
+using Ordering.Infrastructure.Extensions;
 
 namespace Ordering.Infrastructure
 {
@@ -36,7 +37,7 @@ namespace Ordering.Infrastructure
 
         public async Task<bool> SaveEntitiesAsync(CancellationToken cancellationToken = default)
         {
-            // await _mediator.DispatchDomainEventsAsync(this);
+            await _mediator.DispatchDomainEventsAsync(this);
 
             _ = await base.SaveChangesAsync(cancellationToken);
 

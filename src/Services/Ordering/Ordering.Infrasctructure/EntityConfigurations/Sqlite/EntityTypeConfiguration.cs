@@ -40,7 +40,7 @@ namespace Ordering.Infrastructure.EntityConfigurations.Sqlite
             builder.HasOne<Buyer>()
                 .WithMany()
                 .IsRequired()
-                .HasForeignKey("BuyerId");
+                .HasForeignKey("BuyerId"); 
 
             builder.HasOne(o => o.OrderStatus)
                 .WithMany()

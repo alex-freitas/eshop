@@ -90,6 +90,7 @@
             return _orderItems.Sum(o => o.GetUnits() * o.GetUnitPrice());
         }
 
+        #region Status
         public void SetAwaitingValidationStatus()
         {
             if (_orderStatusId == OrderStatus.Submitted.Id)
@@ -160,6 +161,7 @@
                 _description = $"The product items don't have stock: ({itemsStockRejectedDescription}).";
             }
         }
+        #endregion
 
         private void AddOrderStartedDomainEvent(
             string userId,

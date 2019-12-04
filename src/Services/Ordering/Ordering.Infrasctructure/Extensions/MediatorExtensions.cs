@@ -1,13 +1,14 @@
 ﻿using System.Linq;
 using System.Threading.Tasks;
 using MediatR;
+using Microsoft.EntityFrameworkCore;
 using Ordering.Domain.SharedKernel;
 
 namespace Ordering.Infrastructure.Extensions
 {
     internal static class MediatorExtensions
     {
-        public static async Task DispatchDomainEventsAsync(this IMediator mediator, OrderingContext context)
+        public static async Task DispatchDomainEventsAsync(this IMediator mediator, DbContext context)
         {
             var domainEntities = context.ChangeTracker
                 .Entries<Entity>()

@@ -7,24 +7,26 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
 using Ordering.Application.Behaviors;
 using Ordering.Application.Commands;
 using Ordering.Application.Queries;
+using Ordering.Domain.AggregatesModel.BuyerAggregate;
 using Ordering.Domain.AggregatesModel.OrderAggregate;
 using Ordering.Infrastructure;
 using Ordering.Infrastructure.Repositories;
 
-namespace Ordering.WebApi
+namespace Ordering.WebApi.Extensions
 {
     public static class StartupExtensions
-    {
-        
+    {        
         public static IServiceCollection AddCustomDbContext(this IServiceCollection services, IConfiguration configuration)
         {
             var connectionString = configuration["ConnectionString"];
 
             services.AddTransient<IOrderRepository, OrderRepository>();
+            services.AddTransient<IBuyerRepository, BuyerRepository>();
             services.AddTransient<IOrderQueries>(x => new OrderSqliteQueries(connectionString));
 
             //var migrationsAssembly = typeof(OrderingContext).GetTypeInfo().Assembly.GetName().Name; 
@@ -57,20 +59,29 @@ namespace Ordering.WebApi
             return services;
         }
 
+        public static readonly ILoggerFactory MyLoggerFactory
+            = LoggerFactory.Create(builder => { builder.AddConsole(); });
+
         public static IServiceCollection AddCustomSqliteDbContext(this IServiceCollection services, IConfiguration configuration)
         {
             var connectionString = configuration["ConnectionString"];
 
-            services.AddTransient<IOrderRepository, OrderSqliteRepository>();
+            services.AddScoped<IOrderRepository, OrderSqliteRepository>();
+            services.AddScoped<IBuyerRepository, BuyerSqliteRepository>();
+
             services.AddTransient<IOrderQueries>(x => new OrderSqliteQueries(connectionString));
 
             services.AddDbContext<OrderingSqliteDbContext>(options =>
             {
+                options.EnableSensitiveDataLogging();
+
+                //options.UseLoggerFactory(MyLoggerFactory);
+
                 options.UseSqlite(
                     connectionString,
-                    sqlOptions =>
+                    sqliteOptions =>
                     {
-                        sqlOptions.MigrationsAssembly("Ordering.Infrastructure");
+                        sqliteOptions.MigrationsAssembly("Ordering.Infrastructure");
                     });
             });
 
@@ -97,8 +108,7 @@ namespace Ordering.WebApi
 
             return services;
         }
-
-
+        
         #region Swagger
         public static IServiceCollection AddCustomSwashbuckleSwagger(this IServiceCollection services, IConfiguration configuration)
         {

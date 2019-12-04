@@ -8,6 +8,7 @@ using Ordering.Domain.AggregatesModel.BuyerAggregate;
 using Ordering.Domain.AggregatesModel.OrderAggregate;
 using Ordering.Domain.SharedKernel;
 using Ordering.Infrastructure.EntityConfigurations.Sqlite;
+using Ordering.Infrastructure.Extensions;
 
 namespace Ordering.Infrastructure
 {
@@ -33,9 +34,18 @@ namespace Ordering.Infrastructure
 
         public async Task<bool> SaveEntitiesAsync(CancellationToken cancellationToken = default)
         {
-            _ = await base.SaveChangesAsync(cancellationToken);
+            try
+            {
+                _ = await base.SaveChangesAsync(cancellationToken);
 
-            return true;
+                await _mediator.DispatchDomainEventsAsync(this);
+
+                return true;
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }            
         }
 
         //protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)

@@ -4,6 +4,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Ordering.Application.IntegrationsEvents;
+using Ordering.WebApi.Extensions;
 
 namespace Ordering.WebApi
 {
