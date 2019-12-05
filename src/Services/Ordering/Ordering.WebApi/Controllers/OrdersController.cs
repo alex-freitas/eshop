@@ -1,13 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Net;
-using System.Text;
 using System.Threading.Tasks;
 using FluentValidation;
 using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Ordering.Application.Commands;
+using Ordering.Application.Models;
 using Ordering.Application.Queries;
 using Ordering.WebApi.Extensions;
 using Ordering.WebApi.Infrastructure.ActionResults;
@@ -101,7 +101,7 @@ namespace Ordering.WebApi.Controllers
             try
             {
                 var response = await _mediator.Send(command);
-                 
+
                 return Ok(response);
             }
             catch (Exception ex)
@@ -112,7 +112,48 @@ namespace Ordering.WebApi.Controllers
                 }
 
                 return new InternalServerErrorObjectResult(ex.Messages());
-            }            
+            }
+        }
+
+        [Route("createDefault")]
+        [HttpPost]
+        public async Task<IActionResult> CreateDefault()
+        {
+            try
+            {
+                var items = new List<BasketItem>
+                { 
+                    new BasketItem { ProductId = "1", ProductName = "productName", UnitPrice = 10,  Quantity = 1, PictureUrl ="pictureUrl" }
+                };
+
+                var command = new CreateOrderCommand(
+                    items,
+                    "1234",
+                    "userName",
+                    "city",
+                    "street",
+                    "state",
+                    "country",
+                    "zipcode",
+                    "1234-5678-0912-3456",
+                    "holder",
+                    DateTime.Now.AddYears(1),
+                    "123",
+                    1);
+
+                var response = await _mediator.Send(command);
+
+                return Ok(response);
+            }
+            catch (Exception ex)
+            {
+                if (ex.InnerException is ValidationException validationException)
+                {
+                    return BadRequest(validationException.Errors);
+                }
+
+                return new InternalServerErrorObjectResult(ex.Messages());
+            }
         }
     }
 }

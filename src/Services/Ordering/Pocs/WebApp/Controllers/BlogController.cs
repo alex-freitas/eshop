@@ -35,7 +35,14 @@ namespace WebApp.Controllers
 
             if (!_context.Blogs.Any())
             {
-                var newBlog = new Blog { Title = Guid.NewGuid().ToString(), Url = "http://tempuri.org/", Settings = new Settings { HideOldPosts = false } };
+                var status = Enumeration.GetAll<BlogStatus>();
+                _context.BlogStatus.AddRange(status);
+                _context.SaveChanges();
+                
+                _context.Owner.Add(new Owner(1, "John Doe"));
+                _context.SaveChanges();
+
+                var newBlog = new Blog() { Title = Guid.NewGuid().ToString(), Url = "http://tempuri.org/", Settings = new Settings { HideOldPosts = true } };
                 newBlog.Posts.Add(new Post { Title = Guid.NewGuid().ToString() });
                 _context.Blogs.Add(newBlog);
                 _context.SaveChanges();
@@ -43,12 +50,13 @@ namespace WebApp.Controllers
 
             var defaultBlog = _context.Blogs.FirstOrDefault();
             defaultBlog.Posts.Add(new Post { Title = Guid.NewGuid().ToString() });
-
+            defaultBlog.OwnerId = 1;
             _context.Entry(defaultBlog).State = EntityState.Modified;
-
             _context.SaveChanges();
 
-            return _context.Blogs;            
+            var blogs = _context.Blogs.ToList();
+
+            return blogs;            
         }
     }
 }

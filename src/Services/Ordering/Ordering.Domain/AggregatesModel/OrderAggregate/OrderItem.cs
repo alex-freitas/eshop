@@ -5,12 +5,6 @@ namespace Ordering.Domain.AggregatesModel.OrderAggregate
 {
     public class OrderItem : Entity
     {
-        private readonly string _productName;
-        private readonly decimal _unitPrice;
-        private readonly string _pictureUrl;
-        private decimal _discount;
-        private int _units;
-
         public OrderItem(int productId, string productName, decimal unitPrice, decimal discount, string pictureUrl, int units = 1)
         {
             if (units <= 0)
@@ -24,12 +18,11 @@ namespace Ordering.Domain.AggregatesModel.OrderAggregate
             }
 
             ProductId = productId;
-
-            _productName = productName;
-            _unitPrice = unitPrice;
-            _discount = discount;
-            _pictureUrl = pictureUrl;
-            _units = units;
+            ProductName = productName;
+            UnitPrice = unitPrice;
+            Discount = discount;
+            PictureUrl = pictureUrl;
+            Units = units;
         }
 
         protected OrderItem()
@@ -38,30 +31,15 @@ namespace Ordering.Domain.AggregatesModel.OrderAggregate
 
         public int ProductId { get; private set; }
 
-        public string GetPictureUri()
-        {
-            return _pictureUrl;
-        }
+        public string ProductName { get; private set; }
 
-        public decimal GetCurrentDiscount()
-        {
-            return _discount;
-        }
+        public decimal UnitPrice { get; private set; }
 
-        public int GetUnits()
-        {
-            return _units;
-        }
+        public string PictureUrl { get; private set; }
 
-        public decimal GetUnitPrice()
-        {
-            return _unitPrice;
-        }
+        public decimal Discount { get; private set; }
 
-        public string GetOrderItemProductName()
-        {
-            return _productName;
-        }
+        public int Units { get; private set; }
 
         public void SetNewDiscount(decimal discount)
         {
@@ -70,7 +48,7 @@ namespace Ordering.Domain.AggregatesModel.OrderAggregate
                 throw new OrderingDomainException("Discount is not valid");
             }
 
-            _discount = discount;
+            Discount = discount;
         }
 
         public void AddUnits(int units)
@@ -80,7 +58,7 @@ namespace Ordering.Domain.AggregatesModel.OrderAggregate
                 throw new OrderingDomainException("Invalid units");
             }
 
-            _units += units;
+            Units += units;
         }
     }
 }

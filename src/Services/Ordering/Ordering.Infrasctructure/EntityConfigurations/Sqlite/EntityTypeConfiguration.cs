@@ -16,13 +16,17 @@ namespace Ordering.Infrastructure.EntityConfigurations.Sqlite
 
             builder.Ignore(o => o.DomainEvents);
             builder.Ignore(o => o.OrderStatus);
-
+            
             builder.Property(o => o.Id).ValueGeneratedOnAdd();
 
             builder.OwnsOne(o => o.Address);
 
-            builder.Property<DateTime>("OrdersDate").IsRequired();
-            builder.Property<int>("OrderStatusId").IsRequired();
+            builder.Property<DateTime>("_orderDate")
+                .HasColumnName("OrderDate")
+                .IsRequired();
+            
+            //builder.Property<int>("OrderStatusId").IsRequired();
+                        
             builder.Property<int?>("BuyerId").IsRequired(false);
             builder.Property<int?>("PaymentMethodId").IsRequired(false);
             builder.Property<string>("Description").IsRequired(false);
@@ -42,9 +46,9 @@ namespace Ordering.Infrastructure.EntityConfigurations.Sqlite
                 .IsRequired()
                 .HasForeignKey("BuyerId");
 
-            //builder.HasOne(o => o.OrderStatus)
-            //    .WithMany()
-            //    .HasForeignKey("OrderStatusId");
+            builder.HasOne(o => o.OrderStatus).WithMany().HasForeignKey("OrderStatusId");
+            //builder.HasOne<OrderStatus>().WithMany().HasForeignKey("OrderStatusId");
+
         }
     }
 
