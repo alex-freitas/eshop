@@ -15,18 +15,13 @@ namespace Ordering.Infrastructure.EntityConfigurations.Sqlite
             builder.HasKey(o => o.Id);
 
             builder.Ignore(o => o.DomainEvents);
-            builder.Ignore(o => o.OrderStatus);
             
             builder.Property(o => o.Id).ValueGeneratedOnAdd();
 
             builder.OwnsOne(o => o.Address);
 
-            builder.Property<DateTime>("_orderDate")
-                .HasColumnName("OrderDate")
-                .IsRequired();
-            
-            //builder.Property<int>("OrderStatusId").IsRequired();
-                        
+            builder.Property<DateTime>("_orderDate").HasColumnName("OrderDate").IsRequired();            
+            builder.Property<int>("_orderStatusId").HasColumnName("OrderStatusId").IsRequired();           
             builder.Property<int?>("BuyerId").IsRequired(false);
             builder.Property<int?>("PaymentMethodId").IsRequired(false);
             builder.Property<string>("Description").IsRequired(false);
@@ -46,9 +41,9 @@ namespace Ordering.Infrastructure.EntityConfigurations.Sqlite
                 .IsRequired()
                 .HasForeignKey("BuyerId");
 
-            builder.HasOne(o => o.OrderStatus).WithMany().HasForeignKey("OrderStatusId");
-            //builder.HasOne<OrderStatus>().WithMany().HasForeignKey("OrderStatusId");
-
+            builder.HasOne(o => o.OrderStatus)
+                .WithMany()
+                .HasForeignKey("_orderStatusId");
         }
     }
 
@@ -113,27 +108,32 @@ namespace Ordering.Infrastructure.EntityConfigurations.Sqlite
 
             builder.Property<int>("BuyerId").IsRequired();
 
-            builder.Property<string>("CardHolderName")
+            builder.Property<string>("_cardHolderName")
+                .HasColumnName("CardHolderName")
                 .HasMaxLength(200)
                 .IsRequired();
 
-            builder.Property<string>("Alias")
+            builder.Property<string>("_alias")
+                .HasColumnName("Alias")
                 .HasMaxLength(200)
                 .IsRequired();
 
-            builder.Property<string>("CardNumber")
+            builder.Property<string>("_cardNumber")
+                .HasColumnName("CardNumber")
                 .HasMaxLength(25)
                 .IsRequired();
 
-            builder.Property<DateTime>("Expiration")
+            builder.Property<DateTime>("_expiration")
+                .HasColumnName("Expiration")
                 .IsRequired();
 
-            builder.Property<int>("CardTypeId")
+            builder.Property<int>("_cardTypeId")
+                .HasColumnName("CardTypeId")
                 .IsRequired();
 
             builder.HasOne(p => p.CardType)
                 .WithMany()
-                .HasForeignKey("CardTypeId");
+                .HasForeignKey("_cardTypeId");
         }
     }
 

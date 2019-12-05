@@ -43,7 +43,7 @@ namespace Ordering.Infrastructure
             {
                 _ = await base.SaveChangesAsync(cancellationToken);
 
-                //await _mediator.DispatchDomainEventsAsync(this);
+                await _mediator.DispatchDomainEventsAsync(this);
 
                 return true;
             }
@@ -52,16 +52,6 @@ namespace Ordering.Infrastructure
                 throw;
             }            
         }
-
-        //protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        //{
-        //    optionsBuilder.UseSqlite("Filename=ordering.db", options =>
-        //    {
-        //        options.MigrationsAssembly(Assembly.GetExecutingAssembly().FullName);
-        //    });
-
-        //    base.OnConfiguring(optionsBuilder);
-        //}
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

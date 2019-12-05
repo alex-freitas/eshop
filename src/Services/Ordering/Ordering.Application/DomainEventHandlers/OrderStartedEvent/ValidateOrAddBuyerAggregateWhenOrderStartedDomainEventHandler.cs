@@ -51,18 +51,18 @@ namespace Ordering.Application.DomainEventHandlers.OrderStartedEvent
                 notification.CardExpiration,
                 notification.Order.Id);
 
-            var buyerUpdated = buyerOriginallyExisted ?
-               _buyerRepository.Update(buyer) :
-               _buyerRepository.Add(buyer);
+            var buyerUpdated = buyerOriginallyExisted ? _buyerRepository.Update(buyer) : _buyerRepository.Add(buyer);
 
-            await _buyerRepository.UnitOfWork.SaveEntitiesAsync(cancellationToken);
+            _ = await _buyerRepository.UnitOfWork.SaveEntitiesAsync(cancellationToken);
 
-            _logger
-                .CreateLogger<ValidateOrAddBuyerAggregateWhenOrderStartedDomainEventHandler>()
-                .LogTrace(
-                    "Buyer {BuyerId} and related payment method were validated or updated for orderId: {OrderId}.",
-                    buyerUpdated.Id,
-                    notification.Order.Id);
+            Log(notification, buyerUpdated);
+        }
+
+        private void Log(OrderStartedDomainEvent notification, Buyer buyerUpdated)
+        {
+            var message = $"Buyer {buyerUpdated.Id} and related payment method were validated or updated for orderId: {notification.Order.Id}.";
+
+            _logger.CreateLogger<ValidateOrAddBuyerAggregateWhenOrderStartedDomainEventHandler>().LogTrace(message);
         }
     }
 }

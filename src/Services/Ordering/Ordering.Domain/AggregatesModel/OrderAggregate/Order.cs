@@ -10,10 +10,9 @@
     public class Order : Entity, IAggregateRoot
     {
         private DateTime _orderDate;
-
         private List<OrderItem> _orderItems;
-        
         private string _description;
+        private int _orderStatusId;
 
         public Order(
             string userId,
@@ -32,7 +31,7 @@
             BuyerId = buyerId;
             PaymentMethodId = paymentMethodId;
 
-            OrderStatusId = OrderStatus.Submitted.Id;
+            _orderStatusId = OrderStatus.Submitted.Id;
             _orderDate = DateTime.UtcNow;
 
             AddOrderStartedDomainEvent(userId, userName, cardTypeId, cardNumber, cardSecurityNumber, cardHolderName, cardExpiration);
@@ -49,19 +48,7 @@
 
         public Address Address { get; private set; }
 
-
-
-        //private int _orderStatusId;
-
-        public int OrderStatusId { get; private set; }
-
-        public OrderStatus OrderStatus { get;  }
-
-
-
-
-
-
+        public OrderStatus OrderStatus { get; private set; }
 
         public IReadOnlyCollection<OrderItem> OrderItems => _orderItems;
 
@@ -105,65 +92,65 @@
         #region Status
         public void SetAwaitingValidationStatus()
         {
-            if (OrderStatusId == OrderStatus.Submitted.Id)
+            if (_orderStatusId == OrderStatus.Submitted.Id)
             {
                 AddDomainEvent(new OrderStatusChangedToAwaitingValidationDomainEvent(Id, _orderItems));
-                OrderStatusId = OrderStatus.AwaitingValidation.Id;
+                _orderStatusId = OrderStatus.AwaitingValidation.Id;
             }
         }
 
         public void SetStockConfirmedStatus()
         {
-            if (OrderStatusId == OrderStatus.AwaitingValidation.Id)
+            if (_orderStatusId == OrderStatus.AwaitingValidation.Id)
             {
                 AddDomainEvent(new OrderStatusChangedToStockConfirmedDomainEvent(Id));
 
-                OrderStatusId = OrderStatus.StockConfirmed.Id;
+                _orderStatusId = OrderStatus.StockConfirmed.Id;
                 _description = "All the items were confirmed with available stock.";
             }
         }
 
         public void SetPaidStatus()
         {
-            if (OrderStatusId == OrderStatus.StockConfirmed.Id)
+            if (_orderStatusId == OrderStatus.StockConfirmed.Id)
             {
                 AddDomainEvent(new OrderStatusChangedToPaidDomainEvent(Id, OrderItems));
 
-                OrderStatusId = OrderStatus.Paid.Id;
+                _orderStatusId = OrderStatus.Paid.Id;
                 _description = "The payment was performed at a simulated \"American Bank checking bank account ending on XX35071\"";
             }
         }
 
         public void SetShippedStatus()
         {
-            if (OrderStatusId != OrderStatus.Paid.Id)
+            if (_orderStatusId != OrderStatus.Paid.Id)
             {
                 StatusChangeException(OrderStatus.Shipped);
             }
 
-            OrderStatusId = OrderStatus.Shipped.Id;
+            _orderStatusId = OrderStatus.Shipped.Id;
             _description = "The order was shipped.";
             AddDomainEvent(new OrderShippedDomainEvent(this));
         }
 
         public void SetCancelledStatus()
         {
-            if (OrderStatusId == OrderStatus.Paid.Id ||
-                OrderStatusId == OrderStatus.Shipped.Id)
+            if (_orderStatusId == OrderStatus.Paid.Id ||
+                _orderStatusId == OrderStatus.Shipped.Id)
             {
                 StatusChangeException(OrderStatus.Cancelled);
             }
 
-            OrderStatusId = OrderStatus.Cancelled.Id;
+            _orderStatusId = OrderStatus.Cancelled.Id;
             _description = $"The order was cancelled.";
             AddDomainEvent(new OrderCancelledDomainEvent(this));
         }
 
         public void SetCancelledStatusWhenStockIsRejected(IEnumerable<int> orderStockRejectedItems)
         {
-            if (OrderStatusId == OrderStatus.AwaitingValidation.Id)
+            if (_orderStatusId == OrderStatus.AwaitingValidation.Id)
             {
-                OrderStatusId = OrderStatus.Cancelled.Id;
+                _orderStatusId = OrderStatus.Cancelled.Id;
 
                 var itemsStockRejectedProductNames = OrderItems
                     .Where(c => orderStockRejectedItems.Contains(c.ProductId))

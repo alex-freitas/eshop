@@ -22,27 +22,19 @@ namespace Ordering.Application.DomainEventHandlers.BuyerAndPaymentMethodVerified
 
         public async Task Handle(BuyerAndPaymentMethodVerifiedDomainEvent notification, CancellationToken cancellationToken)
         {
-            try
-            {
-                //var order = await _orderRepository.GetAsync(notification.OrderId).ConfigureAwait(true);
-                var order = notification.Order;
+            var order = await _orderRepository.GetAsync(notification.OrderId).ConfigureAwait(true);
+            order.SetBuyerId(notification.Buyer.Id);
+            order.SetPaymentId(notification.Payment.Id);
 
-                order.SetBuyerId(notification.Buyer.Id);
-                order.SetPaymentId(notification.Payment.Id);
+            _logger
+                .CreateLogger<UpdateOrderWhenBuyerAndPaymentMethodVerifiedDomainEventHandler>()
+                .LogTrace(
+                    "Order with Id: {OrderId} has been successfully updated with a payment method {PaymentMethod} ({Id})",
+                    notification.OrderId,
+                    nameof(notification.Payment),
+                    notification.Payment.Id);
 
-                _logger
-                    .CreateLogger<UpdateOrderWhenBuyerAndPaymentMethodVerifiedDomainEventHandler>()
-                    .LogTrace(
-                        "Order with Id: {OrderId} has been successfully updated with a payment method {PaymentMethod} ({Id})",
-                        notification.OrderId,
-                        nameof(notification.Payment),
-                        notification.Payment.Id);
-
-            }
-            catch (Exception ex)
-            {
-                throw;
-            }
+            await _orderRepository.UnitOfWork.SaveChangesAsync(cancellationToken);
         }
     }
 }
