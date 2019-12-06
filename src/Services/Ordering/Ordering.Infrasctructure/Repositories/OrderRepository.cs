@@ -8,9 +8,9 @@ namespace Ordering.Infrastructure.Repositories
 {
     public class OrderRepository : IOrderRepository
     {
-        private readonly OrderingContext _context;
+        private readonly OrderingSqlServerContext _context;
 
-        public OrderRepository(OrderingContext context)
+        public OrderRepository(OrderingSqlServerContext context)
         {
             _context = context ?? throw new ArgumentNullException(nameof(context));
         }

@@ -14,6 +14,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\..\BuildingBlocks\EventBus\IntegrationEventLog\IntegrationEventLog.csproj" />
     <ProjectReference Include="..\Ordering.Application\Ordering.Application.csproj" />
     <ProjectReference Include="..\Ordering.Infrasctructure\Ordering.Infrastructure.csproj" />
   </ItemGroup>

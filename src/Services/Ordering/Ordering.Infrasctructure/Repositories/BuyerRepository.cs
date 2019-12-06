@@ -8,9 +8,9 @@ namespace Ordering.Infrastructure.Repositories
 {
     public class BuyerRepository : IBuyerRepository
     {
-        private readonly OrderingContext _context;
+        private readonly OrderingSqlServerContext _context;
 
-        public BuyerRepository(OrderingContext context)
+        public BuyerRepository(OrderingSqlServerContext context)
         {
             _context = context;
         }

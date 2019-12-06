@@ -8,9 +8,9 @@ namespace Ordering.Infrastructure.Repositories
 {
     public class BuyerSqliteRepository : IBuyerRepository
     {
-        private readonly OrderingSqliteDbContext _context;
+        private readonly OrderingSqliteContext _context;
 
-        public BuyerSqliteRepository(OrderingSqliteDbContext context)
+        public BuyerSqliteRepository(OrderingSqliteContext context)
         {
             _context = context;
         }

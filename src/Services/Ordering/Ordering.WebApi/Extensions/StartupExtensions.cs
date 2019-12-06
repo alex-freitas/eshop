@@ -2,15 +2,17 @@
 using System.IO;
 using System.Reflection;
 using FluentValidation;
+using IntegrationEventLog;
+using IntegrationEventLog.Services;
 using MediatR;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
 using Ordering.Application.Behaviors;
 using Ordering.Application.Commands;
+using Ordering.Application.IntegrationsEvents;
 using Ordering.Application.Queries;
 using Ordering.Domain.AggregatesModel.BuyerAggregate;
 using Ordering.Domain.AggregatesModel.OrderAggregate;
@@ -20,74 +22,7 @@ using Ordering.Infrastructure.Repositories;
 namespace Ordering.WebApi.Extensions
 {
     public static class StartupExtensions
-    {        
-        public static IServiceCollection AddCustomDbContext(this IServiceCollection services, IConfiguration configuration)
-        {
-            var connectionString = configuration["ConnectionString"];
-
-            services.AddTransient<IOrderRepository, OrderRepository>();
-            services.AddTransient<IBuyerRepository, BuyerRepository>();
-            services.AddTransient<IOrderQueries>(x => new OrderSqliteQueries(connectionString));
-
-            //var migrationsAssembly = typeof(OrderingContext).GetTypeInfo().Assembly.GetName().Name; 
-            var migrationsAssembly = "Ordering.Infrastructure";
-
-            services.AddEntityFrameworkSqlServer();
-
-            services.AddDbContext<OrderingContext>(options =>
-            {
-                options.UseSqlServer(
-                    connectionString,
-                    sqlOptions =>
-                    {
-                        sqlOptions.MigrationsAssembly(migrationsAssembly);
-                        sqlOptions.EnableRetryOnFailure(maxRetryCount: 10, maxRetryDelay: TimeSpan.FromSeconds(30), errorNumbersToAdd: null);
-                    });
-            },
-            ServiceLifetime.Scoped);
-
-            return services;
-        }
-
-        public static IServiceCollection AddCustomInMemoryDbContext(this IServiceCollection services, IConfiguration configuration)
-        {
-            services.AddDbContext<OrderingContext>(options =>
-            {
-                options.UseInMemoryDatabase("EShop.Ordering");
-            });
-
-            return services;
-        }
-
-        public static readonly ILoggerFactory MyLoggerFactory
-            = LoggerFactory.Create(builder => { builder.AddConsole(); });
-
-        public static IServiceCollection AddCustomSqliteDbContext(this IServiceCollection services, IConfiguration configuration)
-        {
-            var connectionString = configuration["ConnectionString"];
-
-            services.AddScoped<IOrderRepository, OrderSqliteRepository>();
-            services.AddScoped<IBuyerRepository, BuyerSqliteRepository>();
-
-            services.AddTransient<IOrderQueries>(x => new OrderSqliteQueries(connectionString));
-
-            services.AddDbContext<OrderingSqliteDbContext>(options =>
-            {
-                options.EnableSensitiveDataLogging();
-
-                //options.UseLoggerFactory(MyLoggerFactory);
-
-                options.UseSqlite(
-                    connectionString,
-                    sqliteOptions =>
-                    {
-                        sqliteOptions.MigrationsAssembly("Ordering.Infrastructure");
-                    });
-            });
-
-            return services;
-        }
-
+    {
         public static IServiceCollection AddCustomMediatR(this IServiceCollection services)
         {
             var assembly = typeof(CreateOrderCommand).Assembly;
@@ -108,7 +43,70 @@ namespace Ordering.WebApi.Extensions
 
             return services;
         }
+
+        public static IServiceCollection AddCustomDbContext(this IServiceCollection services, IConfiguration configuration)
+        {
+            var connectionString = configuration["ConnectionString"];
+
+            services.AddTransient<IOrderRepository, OrderRepository>();
+            services.AddTransient<IBuyerRepository, BuyerRepository>();
+            services.AddTransient<IOrderQueries>(x => new OrderSqliteQueries(connectionString));
+
+            //var migrationsAssembly = typeof(OrderingContext).GetTypeInfo().Assembly.GetName().Name; 
+            var migrationsAssembly = "Ordering.Infrastructure";
+
+            services.AddEntityFrameworkSqlServer();
+
+            services.AddDbContext<OrderingSqlServerContext>(options =>
+            {
+                options.UseSqlServer(
+                    connectionString,
+                    sqlOptions =>
+                    {
+                        sqlOptions.MigrationsAssembly(migrationsAssembly);
+                        sqlOptions.EnableRetryOnFailure(maxRetryCount: 10, maxRetryDelay: TimeSpan.FromSeconds(30), errorNumbersToAdd: null);
+                    });
+            },
+            ServiceLifetime.Scoped);
+
+            return services;
+        }
+
+        public static IServiceCollection AddCustomInMemoryDbContext(this IServiceCollection services, IConfiguration configuration)
+        {
+            services.AddDbContext<OrderingSqlServerContext>(options =>
+            {
+                options.UseInMemoryDatabase("EShop.Ordering");
+            });
+
+            return services;
+        }
+
+        public static IServiceCollection AddCustomSqliteDbContext(this IServiceCollection services, IConfiguration configuration)
+        {
+            var connectionString = configuration["ConnectionString"];
+
+            services.AddScoped<IOrderRepository, OrderSqliteRepository>();
+            services.AddScoped<IBuyerRepository, BuyerSqliteRepository>();
+
+            services.AddTransient<IOrderQueries>(x => new OrderSqliteQueries(connectionString));
+
+            services.AddDbContext<OrderingSqliteContext>(SqliteContextConfiguration(connectionString));
+
+            services.AddDbContext<IntegrationEventLogContext>(SqliteContextConfiguration(connectionString));
+
+            return services;
+        }
         
+        public static IServiceCollection AddCustomIntegrations(this IServiceCollection services, IConfiguration configuration)
+        {
+            services.AddTransient<IIntegrationEventLogService, IntegrationEventLogService>();
+            
+            services.AddTransient<IOrderingIntegrationEventService, OrderingIntegrationEventService>();
+
+            return services;
+        }
+
         #region Swagger
         public static IServiceCollection AddCustomSwashbuckleSwagger(this IServiceCollection services, IConfiguration configuration)
         {
@@ -174,5 +172,14 @@ namespace Ordering.WebApi.Extensions
             return app;
         }
         #endregion
+
+        private static Action<DbContextOptionsBuilder> SqliteContextConfiguration(string connectionString)
+        {
+            return options =>
+            {
+                options.EnableSensitiveDataLogging();
+                options.UseSqlite(connectionString, sqlOptions => sqlOptions.MigrationsAssembly("Ordering.Infrastructure"));
+            };
+        }
     }
 }
