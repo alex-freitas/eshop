@@ -7,9 +7,9 @@ namespace Ordering.Infrastructure.Repositories
 {
     public class OrderSqliteRepository : IOrderRepository
     {
-        private readonly OrderingSqliteContext _context;
+        private readonly OrderingContext _context;
 
-        public OrderSqliteRepository(OrderingSqliteContext context)
+        public OrderSqliteRepository(OrderingContext context)
         {
             _context = context ?? throw new ArgumentNullException(nameof(context));
         }

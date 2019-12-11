@@ -87,6 +87,5 @@ namespace Ordering.Application.Commands
 
         [DataMember]
         public List<OrderItemDto> OrderItems { get; set; }
-
     }
 }

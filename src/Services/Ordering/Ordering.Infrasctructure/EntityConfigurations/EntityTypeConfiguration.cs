@@ -10,13 +10,13 @@ namespace Ordering.Infrastructure.EntityConfigurations
     {
         public void Configure(EntityTypeBuilder<Order> builder)
         {
-            builder.ToTable("orders", OrderingSqlServerContext.DEFAULT_SCHEMA);
+            builder.ToTable("orders", OrderingContext.DEFAULT_SCHEMA);
 
             builder.HasKey(o => o.Id);
 
             builder.Ignore(o => o.DomainEvents);
 
-            builder.Property(o => o.Id).UseHiLo("orderseq", OrderingSqlServerContext.DEFAULT_SCHEMA);
+            builder.Property(o => o.Id).UseHiLo("orderseq", OrderingContext.DEFAULT_SCHEMA);
 
             builder.OwnsOne(o => o.Address);
 
@@ -52,7 +52,7 @@ namespace Ordering.Infrastructure.EntityConfigurations
     {
         public void Configure(EntityTypeBuilder<OrderItem> builder)
         {
-            builder.ToTable("orderItems", OrderingSqlServerContext.DEFAULT_SCHEMA);
+            builder.ToTable("orderItems", OrderingContext.DEFAULT_SCHEMA);
 
             builder.HasKey(o => o.Id);
 
@@ -80,7 +80,7 @@ namespace Ordering.Infrastructure.EntityConfigurations
     {
         public void Configure(EntityTypeBuilder<OrderStatus> builder)
         {
-            builder.ToTable("orderstatus", OrderingSqlServerContext.DEFAULT_SCHEMA);
+            builder.ToTable("orderstatus", OrderingContext.DEFAULT_SCHEMA);
 
             builder.HasKey(o => o.Id);
 
@@ -99,7 +99,7 @@ namespace Ordering.Infrastructure.EntityConfigurations
     {
         public void Configure(EntityTypeBuilder<PaymentMethod> builder)
         {
-            builder.ToTable("paymentmethods", OrderingSqlServerContext.DEFAULT_SCHEMA);
+            builder.ToTable("paymentmethods", OrderingContext.DEFAULT_SCHEMA);
 
             builder.HasKey(b => b.Id);
 
@@ -137,7 +137,7 @@ namespace Ordering.Infrastructure.EntityConfigurations
     {
         public void Configure(EntityTypeBuilder<CardType> builder)
         {
-            builder.ToTable("cardtypes", OrderingSqlServerContext.DEFAULT_SCHEMA);
+            builder.ToTable("cardtypes", OrderingContext.DEFAULT_SCHEMA);
 
             builder.HasKey(ct => ct.Id);
 
@@ -156,7 +156,7 @@ namespace Ordering.Infrastructure.EntityConfigurations
     {
         public void Configure(EntityTypeBuilder<Buyer> builder)
         {
-            builder.ToTable("buyers", OrderingSqlServerContext.DEFAULT_SCHEMA);
+            builder.ToTable("buyers", OrderingContext.DEFAULT_SCHEMA);
 
             builder.HasKey(b => b.Id);
 

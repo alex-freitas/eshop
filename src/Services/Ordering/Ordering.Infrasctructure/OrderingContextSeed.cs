@@ -15,7 +15,7 @@ namespace Ordering.Infrastructure
 {
     public class OrderingContextSeed
     {
-        public async Task SeedAsync(OrderingSqliteContext context, ILogger<OrderingContextSeed> logger)
+        public async Task SeedAsync(OrderingContext context, ILogger<OrderingContextSeed> logger)
         {
             var policy = CreatePolicy(logger, nameof(OrderingContextSeed));
 

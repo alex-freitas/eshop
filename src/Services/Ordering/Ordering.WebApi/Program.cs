@@ -15,7 +15,7 @@ namespace Ordering.WebApi
         {
             var host = CreateHostBuilder(args).Build();
 
-            host.MigrateDbContext<OrderingSqliteContext>(async (context, services) =>
+            host.MigrateDbContext<OrderingContext>(async (context, services) =>
             {
                 var logger = services.GetService<ILogger<OrderingContextSeed>>();
 

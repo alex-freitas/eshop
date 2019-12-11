@@ -57,7 +57,7 @@ namespace Ordering.WebApi.Extensions
 
             services.AddEntityFrameworkSqlServer();
 
-            services.AddDbContext<OrderingSqlServerContext>(options =>
+            services.AddDbContext<OrderingContext>(options =>
             {
                 options.UseSqlServer(
                     connectionString,
@@ -74,7 +74,7 @@ namespace Ordering.WebApi.Extensions
 
         public static IServiceCollection AddCustomInMemoryDbContext(this IServiceCollection services, IConfiguration configuration)
         {
-            services.AddDbContext<OrderingSqlServerContext>(options =>
+            services.AddDbContext<OrderingContext>(options =>
             {
                 options.UseInMemoryDatabase("EShop.Ordering");
             });
@@ -91,7 +91,7 @@ namespace Ordering.WebApi.Extensions
 
             services.AddTransient<IOrderQueries>(x => new OrderSqliteQueries(connectionString));
 
-            services.AddDbContext<OrderingSqliteContext>(SqliteContextConfiguration(connectionString));
+            services.AddDbContext<OrderingContext>(SqliteContextConfiguration(connectionString));
 
             services.AddDbContext<IntegrationEventLogContext>(SqliteContextConfiguration(connectionString));
 

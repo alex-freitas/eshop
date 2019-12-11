@@ -6,6 +6,7 @@
     <Rule Id="CA1054" Action="None" />
     <Rule Id="CA1055" Action="None" />
     <Rule Id="CA1303" Action="None" />
+    <Rule Id="CA2007" Action="None" />
   </Rules>
   
   <Rules AnalyzerId="SonarAnalyzer.CSharp" RuleNamespace="SonarAnalyzer.CSharp">
