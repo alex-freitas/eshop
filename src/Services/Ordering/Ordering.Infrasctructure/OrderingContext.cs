@@ -26,15 +26,8 @@ namespace Ordering.Infrastructure
         {
             _mediator = mediator ?? throw new ArgumentNullException(nameof(mediator));
 
-            if (IsSqlite)
-            {
-                Database.EnsureCreated();
-            }
-
             Debug.WriteLine($"{nameof(OrderingContext)}::ctor ->" + GetHashCode());
         }
-
-        public bool IsSqlite => Database.ProviderName == "Microsoft.EntityFrameworkCore.Sqlite";
 
         public DbSet<Order> Orders { get; set; }
 
@@ -80,11 +73,7 @@ namespace Ordering.Infrastructure
 
         public async Task CommitTransactionAsync(IDbContextTransaction transaction)
         {
-            if (transaction == null) 
-                throw new ArgumentNullException(nameof(transaction));
-            
-            if (transaction != _currentTransaction) 
-                throw new InvalidOperationException($"Transaction {transaction.TransactionId} is not current");
+            ValidateTransaction(transaction);
 
             try
             {
@@ -106,6 +95,15 @@ namespace Ordering.Infrastructure
             }
         }
 
+        private void ValidateTransaction(IDbContextTransaction transaction)
+        {
+            if (transaction == null)
+                throw new ArgumentNullException(nameof(transaction));
+
+            if (transaction != _currentTransaction)
+                throw new InvalidOperationException($"Transaction {transaction.TransactionId} is not current");
+        }
+
         public void RollbackTransaction()
         {
             try
@@ -124,8 +122,8 @@ namespace Ordering.Infrastructure
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            if (IsSqlite)
-            {
+            //if (this.IsSqlite())
+            //{
                 modelBuilder.ApplyConfiguration(new SqliteEntityConfigurations.OrderEntityTypeConfiguration());
                 modelBuilder.ApplyConfiguration(new SqliteEntityConfigurations.OrderItemEntityTypeConfiguration());
 
@@ -134,18 +132,18 @@ namespace Ordering.Infrastructure
 
                 modelBuilder.ApplyConfiguration(new SqliteEntityConfigurations.CardTypeEntityTypeConfiguration());
                 modelBuilder.ApplyConfiguration(new SqliteEntityConfigurations.OrderStatusEntityTypeConfiguration());
-            }
-            else
-            {
-                modelBuilder.ApplyConfiguration(new OrderEntityTypeConfiguration());
-                modelBuilder.ApplyConfiguration(new OrderItemEntityTypeConfiguration());
+            //}
+            //else
+            //{
+                //modelBuilder.ApplyConfiguration(new OrderEntityTypeConfiguration());
+                //modelBuilder.ApplyConfiguration(new OrderItemEntityTypeConfiguration());
 
-                modelBuilder.ApplyConfiguration(new BuyerEntityTypeConfiguration());
-                modelBuilder.ApplyConfiguration(new PaymentMethodEntityTypeConfiguration());
+                //modelBuilder.ApplyConfiguration(new BuyerEntityTypeConfiguration());
+                //modelBuilder.ApplyConfiguration(new PaymentMethodEntityTypeConfiguration());
 
-                modelBuilder.ApplyConfiguration(new CardTypeEntityTypeConfiguration());
-                modelBuilder.ApplyConfiguration(new OrderStatusEntityTypeConfiguration());
-            }
+                //modelBuilder.ApplyConfiguration(new CardTypeEntityTypeConfiguration());
+                //modelBuilder.ApplyConfiguration(new OrderStatusEntityTypeConfiguration());
+            //}
 
 
             base.OnModelCreating(modelBuilder);

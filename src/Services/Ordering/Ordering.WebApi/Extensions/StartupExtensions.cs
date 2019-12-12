@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Data.Common;
 using System.IO;
 using System.Reflection;
 using FluentValidation;
@@ -7,6 +8,7 @@ using IntegrationEventLog.Services;
 using MediatR;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.OpenApi.Models;
@@ -23,6 +25,7 @@ namespace Ordering.WebApi.Extensions
 {
     public static class StartupExtensions
     {
+        #region MeditR
         public static IServiceCollection AddCustomMediatR(this IServiceCollection services)
         {
             var assembly = typeof(CreateOrderCommand).Assembly;
@@ -37,13 +40,16 @@ namespace Ordering.WebApi.Extensions
             }
 
             services.AddScoped(typeof(IPipelineBehavior<,>), typeof(LoggingBehavior<,>));
-            services.AddScoped(typeof(IPipelineBehavior<,>), typeof(FailFastRequestBahavior<,>));
+            services.AddScoped(typeof(IPipelineBehavior<,>), typeof(ValidatorBehavior<,>));
+            services.AddScoped(typeof(IPipelineBehavior<,>), typeof(TransactionBehavior<,>));
 
             services.AddMediatR(assembly);
 
             return services;
         }
-
+        #endregion
+        
+        #region SqlServer
         public static IServiceCollection AddCustomDbContext(this IServiceCollection services, IConfiguration configuration)
         {
             var connectionString = configuration["ConnectionString"];
@@ -81,7 +87,9 @@ namespace Ordering.WebApi.Extensions
 
             return services;
         }
+        #endregion
 
+        #region Sqlite
         public static IServiceCollection AddCustomSqliteDbContext(this IServiceCollection services, IConfiguration configuration)
         {
             var connectionString = configuration["ConnectionString"];
@@ -95,17 +103,31 @@ namespace Ordering.WebApi.Extensions
 
             services.AddDbContext<IntegrationEventLogContext>(SqliteContextConfiguration(connectionString));
 
+            services.AddTransient<Func<DbConnection, IIntegrationEventLogService>>(
+                sp => (DbConnection connection) => 
+                    new IntegrationEventLogService(new DbContextOptionsBuilder<IntegrationEventLogContext>().UseSqlite(connection).Options));
+
             return services;
         }
-        
+
+        private static Action<DbContextOptionsBuilder> SqliteContextConfiguration(string connectionString)
+        {
+            return options =>
+            {
+                options.EnableSensitiveDataLogging();
+                options.UseSqlite(connectionString, sqlOptions => sqlOptions.MigrationsAssembly("Ordering.Infrastructure"));
+            };
+        }
+        #endregion
+
+        #region Integration
         public static IServiceCollection AddCustomIntegrations(this IServiceCollection services, IConfiguration configuration)
         {
-            services.AddTransient<IIntegrationEventLogService, IntegrationEventLogService>();
-            
             services.AddTransient<IOrderingIntegrationEventService, OrderingIntegrationEventService>();
 
             return services;
         }
+        #endregion
 
         #region Swagger
         public static IServiceCollection AddCustomSwashbuckleSwagger(this IServiceCollection services, IConfiguration configuration)
@@ -163,7 +185,7 @@ namespace Ordering.WebApi.Extensions
         public static IApplicationBuilder UseCustomNSwagSwagger(this IApplicationBuilder app)
         {
             app.UseOpenApi();
-            
+
             app.UseSwaggerUi3(settings =>
             {
                 settings.EnableTryItOut = true;
@@ -172,14 +194,5 @@ namespace Ordering.WebApi.Extensions
             return app;
         }
         #endregion
-
-        private static Action<DbContextOptionsBuilder> SqliteContextConfiguration(string connectionString)
-        {
-            return options =>
-            {
-                options.EnableSensitiveDataLogging();
-                options.UseSqlite(connectionString, sqlOptions => sqlOptions.MigrationsAssembly("Ordering.Infrastructure"));
-            };
-        }
     }
 }

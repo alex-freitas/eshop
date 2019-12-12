@@ -7,7 +7,13 @@ namespace IntegrationEventLog
     {
         public IntegrationEventLogContext(DbContextOptions<IntegrationEventLogContext> options) : base(options)
         {
+            if (IsSqlite)
+            {
+                //Database.EnsureCreated();
+            }
         }
+
+        public bool IsSqlite => Database.ProviderName == "Microsoft.EntityFrameworkCore.Sqlite";
 
         public DbSet<IntegrationEventLogEntry> IntegrationEventLogs { get; set; }
 
@@ -33,6 +39,8 @@ namespace IntegrationEventLog
             builder.Property(e => e.TimesSent).IsRequired();
 
             builder.Property(e => e.EventTypeName).IsRequired();
+
+            builder.Property(e => e.TransactionId).IsRequired();
         }
     }
 }

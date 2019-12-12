@@ -14,16 +14,16 @@ namespace Ordering.Application.Behaviors
     public class TransactionBehavior<TRequest, TResponse> : IPipelineBehavior<TRequest, TResponse>
     {
         private readonly ILogger<TransactionBehavior<TRequest, TResponse>> _logger;
-        private readonly OrderingContext _dbContext;
+        private readonly OrderingContext _orderingContext;
         private readonly IOrderingIntegrationEventService _orderingIntegrationEventService;
 
         public TransactionBehavior(
             ILogger<TransactionBehavior<TRequest, TResponse>> logger,
-            OrderingContext dbContext,
+            OrderingContext orderingContext,
             IOrderingIntegrationEventService orderingIntegrationEventService)
         {
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
-            _dbContext = dbContext ?? throw new ArgumentNullException(nameof(dbContext));
+            _orderingContext = orderingContext ?? throw new ArgumentNullException(nameof(orderingContext));
             _orderingIntegrationEventService = orderingIntegrationEventService ?? throw new ArgumentNullException(nameof(orderingIntegrationEventService));
         }
 
@@ -34,18 +34,18 @@ namespace Ordering.Application.Behaviors
 
             try
             {
-                if (_dbContext.HasActiveTransaction)
+                if (_orderingContext.HasActiveTransaction)
                 {
                     return await next();
                 }
 
-                var strategy = _dbContext.Database.CreateExecutionStrategy();
+                var strategy = _orderingContext.Database.CreateExecutionStrategy();
 
                 await strategy.ExecuteAsync(async () =>
                 {
                     Guid transactionId;
 
-                    using (var transaction = await _dbContext.BeginTransactionAsync())
+                    using (var transaction = await _orderingContext.BeginTransactionAsync())
                     {
                         _logger.LogInformation("----- Begin transaction {TransactionId} for {CommandName} ({@Command})", transaction.TransactionId, typeName, request);
 
@@ -53,7 +53,7 @@ namespace Ordering.Application.Behaviors
 
                         _logger.LogInformation("----- Commit transaction {TransactionId} for {CommandName}", transaction.TransactionId, typeName);
 
-                        await _dbContext.CommitTransactionAsync(transaction);
+                        await _orderingContext.CommitTransactionAsync(transaction);
 
                         transactionId = transaction.TransactionId;
                     }
@@ -63,7 +63,7 @@ namespace Ordering.Application.Behaviors
 
                 return response;
             }
-            catch (Exception ex )
+            catch (Exception ex)
             {
                 _logger.LogError(ex, $"ERROR Handling transaction for {typeName} ({request})");
                 throw;

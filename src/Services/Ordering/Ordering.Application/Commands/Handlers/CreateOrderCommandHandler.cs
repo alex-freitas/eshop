@@ -52,9 +52,14 @@ namespace Ordering.Application.Commands.Handlers
 
             _orderRepository.Add(order);
 
-            var result = await _orderRepository.UnitOfWork.SaveEntitiesAsync(cancellationToken);
-
-            return result;
+            try
+            {
+                return await _orderRepository.UnitOfWork.SaveEntitiesAsync(cancellationToken);
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
         }
     }
 }

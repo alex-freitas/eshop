@@ -1,6 +1,8 @@
 ﻿using System;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Storage;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
@@ -42,10 +44,22 @@ namespace Ordering.Infrastructure.Extensions
             return host;
         }
 
-        private static void InvokeSeeder<T>(Action<T, IServiceProvider> seeder, T context, IServiceProvider services) 
+        private static void InvokeSeeder<T>(Action<T, IServiceProvider> seeder, T context, IServiceProvider services)
             where T : DbContext
         {
-            context.Database.Migrate();
+            if (context.IsSqlite())
+            {
+                context.Database.EnsureCreated();
+                
+                var databaseCreator = (RelationalDatabaseCreator)context.Database.GetService<IDatabaseCreator>();
+                
+                databaseCreator.CreateTables();
+            }
+            else
+            {
+                context.Database.Migrate();
+            }
+
             seeder(context, services);
         }
     }

@@ -23,8 +23,6 @@ namespace Ordering.Infrastructure
             {
                 using (context)
                 {
-                    context.Database.Migrate();
-
                     if (!context.CardTypes.Any())
                     {
                         context.CardTypes.AddRange(GetPredefinedCardTypes());

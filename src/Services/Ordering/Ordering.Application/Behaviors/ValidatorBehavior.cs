@@ -9,14 +9,14 @@ using Ordering.Domain.Exceptions;
 
 namespace Ordering.Application.Behaviors
 {
-    public class FailFastRequestBahavior<TRequest, TResponse> : IPipelineBehavior<TRequest, TResponse>
+    public class ValidatorBehavior<TRequest, TResponse> : IPipelineBehavior<TRequest, TResponse>
     {
         private readonly IEnumerable<IValidator<TRequest>> _validators;
-        private readonly ILogger<FailFastRequestBahavior<TRequest, TResponse>> _logger;
+        private readonly ILogger<ValidatorBehavior<TRequest, TResponse>> _logger;
 
-        public FailFastRequestBahavior(
+        public ValidatorBehavior(
             IEnumerable<IValidator<TRequest>> validators,
-            ILogger<FailFastRequestBahavior<TRequest, TResponse>> logger)
+            ILogger<ValidatorBehavior<TRequest, TResponse>> logger)
         {
             _validators = validators;
             _logger = logger;

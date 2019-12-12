@@ -1,9 +1,11 @@
 ﻿using System;
+using System.Data.Common;
 using System.Threading.Tasks;
 using EventBus.Abstractions;
 using EventBus.Events;
 using IntegrationEventLog;
 using IntegrationEventLog.Services;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Ordering.Infrastructure;
 
@@ -11,38 +13,40 @@ namespace Ordering.Application.IntegrationsEvents
 {
     public class OrderingIntegrationEventService : IOrderingIntegrationEventService
     {
+        private readonly ILogger<OrderingIntegrationEventService> _logger;
         //private readonly IEventBus _eventBus;
         private readonly OrderingContext _orderingContext;
-        private readonly IntegrationEventLogContext _eventLogContext;
-        private readonly IIntegrationEventLogService _integrationEventLogService;
-        private readonly ILogger<OrderingIntegrationEventService> _logger;
+        private readonly Func<DbConnection, IIntegrationEventLogService> _integrationEventLogServiceFactory;
 
         public OrderingIntegrationEventService(
-            //IEventBus eventBus,
+            ILogger<OrderingIntegrationEventService> logger,
             OrderingContext orderingContext,
-            IntegrationEventLogContext eventLogContext,
-            IIntegrationEventLogService integrationEventLogService,
-            ILogger<OrderingIntegrationEventService> logger)
+            Func<DbConnection, IIntegrationEventLogService> integrationEventLogServiceFactory)
         {
-            //_eventBus = eventBus ?? throw new ArgumentNullException(nameof(eventBus));
-            _orderingContext = orderingContext ?? throw new ArgumentNullException(nameof(orderingContext));
-            _eventLogContext = eventLogContext ?? throw new ArgumentNullException(nameof(eventLogContext));
-            _integrationEventLogService = integrationEventLogService ?? throw new ArgumentNullException(nameof(integrationEventLogService));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+
+            _orderingContext = orderingContext ?? throw new ArgumentNullException(nameof(orderingContext));
+
+            _integrationEventLogServiceFactory = integrationEventLogServiceFactory ??
+                throw new ArgumentNullException(nameof(integrationEventLogServiceFactory));
+
+            IntegrationEventLogService = _integrationEventLogServiceFactory(_orderingContext.Database.GetDbConnection());
         }
 
-        public async Task AddAndSaveEventAsync(IntegrationEvent evt)
+        public IIntegrationEventLogService IntegrationEventLogService { get; }
+
+        public async Task AddAndSaveEventAsync(IntegrationEvent integrationEvent)
         {
-            _logger.LogInformation("----- Enqueuing integration event {IntegrationEventId} to repository ({@IntegrationEvent})", evt.Id, evt);
+            _logger.LogInformation($"----- Enqueuing integration event {integrationEvent.Id} to repository ({integrationEvent})");
 
             var currentTransaction = _orderingContext.GetCurrentTransaction();
 
-            await _integrationEventLogService.SaveEventAsync(evt, currentTransaction);
+            await IntegrationEventLogService.SaveEventAsync(integrationEvent, currentTransaction);
         }
 
         public async Task PublishEventsThroughEventBusAsync(Guid transactionId)
         {
-            var pending = await _integrationEventLogService.RetrieveEventLogsPendingToPublishAsync(transactionId);
+            var pending = await IntegrationEventLogService.RetrieveEventLogsPendingToPublishAsync(transactionId);
 
             foreach (var log in pending)
             {
@@ -50,16 +54,16 @@ namespace Ordering.Application.IntegrationsEvents
 
                 try
                 {
-                    await _integrationEventLogService.MarkEventAsInProgressAsync(log.EventId);
+                    await IntegrationEventLogService.MarkEventAsInProgressAsync(log.EventId);
 
                     //_eventBus.Publish(log.IntegrationEvent);
 
-                    await _integrationEventLogService.MarkEventAsPublishedAsync(log.EventId);
+                    await IntegrationEventLogService.MarkEventAsPublishedAsync(log.EventId);
                 }
                 catch (Exception ex)
                 {
                     _logger.LogError(ex, $"ERROR publishing integration event: {log.EventId} from {"AppName"}");
-                    await _integrationEventLogService.MarkEventAsFailedAsync(log.EventId);
+                    await IntegrationEventLogService.MarkEventAsFailedAsync(log.EventId);
                 }
             }
         }

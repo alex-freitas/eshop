@@ -32,6 +32,7 @@
             PaymentMethodId = paymentMethodId;
 
             _orderStatusId = OrderStatus.Submitted.Id;
+            OrderStatus = OrderStatus.Submitted;
             _orderDate = DateTime.UtcNow;
 
             AddOrderStartedDomainEvent(userId, userName, cardTypeId, cardNumber, cardSecurityNumber, cardHolderName, cardExpiration);

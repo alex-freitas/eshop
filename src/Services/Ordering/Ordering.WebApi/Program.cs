@@ -1,9 +1,11 @@
+using IntegrationEventLog;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Ordering.Infrastructure;
 using Ordering.Infrastructure.Extensions;
+
 namespace Ordering.WebApi
 {
     public static class Program
@@ -15,12 +17,14 @@ namespace Ordering.WebApi
         {
             var host = CreateHostBuilder(args).Build();
 
-            host.MigrateDbContext<OrderingContext>(async (context, services) =>
+            host.MigrateDbContext<OrderingContext>((context, services) =>
             {
                 var logger = services.GetService<ILogger<OrderingContextSeed>>();
-
-                await new OrderingContextSeed().SeedAsync(context, logger);
+                
+                new OrderingContextSeed().SeedAsync(context, logger).Wait();
             });
+
+            host.MigrateDbContext<IntegrationEventLogContext>((context, services) => { });
 
             host.Run();
         }

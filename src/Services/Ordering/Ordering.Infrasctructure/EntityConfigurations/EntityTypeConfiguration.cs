@@ -39,7 +39,7 @@ namespace Ordering.Infrastructure.EntityConfigurations
 
             builder.HasOne<Buyer>()
                 .WithMany()
-                .IsRequired()
+                .IsRequired(false)
                 .HasForeignKey("BuyerId");
 
             builder.HasOne(o => o.OrderStatus)
