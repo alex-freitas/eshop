@@ -47,12 +47,9 @@ namespace Ordering.Infrastructure.Extensions
         private static void InvokeSeeder<T>(Action<T, IServiceProvider> seeder, T context, IServiceProvider services)
             where T : DbContext
         {
-            if (context.IsSqlite())
+            if (context.Database.IsSqlite())
             {
-                context.Database.EnsureCreated();
-                
                 var databaseCreator = (RelationalDatabaseCreator)context.Database.GetService<IDatabaseCreator>();
-                
                 databaseCreator.CreateTables();
             }
             else

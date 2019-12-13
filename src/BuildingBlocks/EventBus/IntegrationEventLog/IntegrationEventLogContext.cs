@@ -7,13 +7,7 @@ namespace IntegrationEventLog
     {
         public IntegrationEventLogContext(DbContextOptions<IntegrationEventLogContext> options) : base(options)
         {
-            if (IsSqlite)
-            {
-                //Database.EnsureCreated();
-            }
         }
-
-        public bool IsSqlite => Database.ProviderName == "Microsoft.EntityFrameworkCore.Sqlite";
 
         public DbSet<IntegrationEventLogEntry> IntegrationEventLogs { get; set; }
 

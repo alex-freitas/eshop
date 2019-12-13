@@ -105,7 +105,10 @@ namespace Ordering.WebApi.Extensions
 
             services.AddTransient<Func<DbConnection, IIntegrationEventLogService>>(
                 sp => (DbConnection connection) => 
-                    new IntegrationEventLogService(new DbContextOptionsBuilder<IntegrationEventLogContext>().UseSqlite(connection).Options));
+                    new IntegrationEventLogService(new DbContextOptionsBuilder<IntegrationEventLogContext>()
+                        .EnableSensitiveDataLogging()
+                        .UseSqlite(connection)
+                        .Options));
 
             return services;
         }

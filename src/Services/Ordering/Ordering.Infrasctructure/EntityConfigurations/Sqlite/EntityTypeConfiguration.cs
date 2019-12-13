@@ -18,12 +18,32 @@ namespace Ordering.Infrastructure.EntityConfigurations.Sqlite
             
             builder.Property(o => o.Id).ValueGeneratedOnAdd();
 
-            builder.OwnsOne(o => o.Address);
+            builder.OwnsOne(o => o.Address, a => a.WithOwner());
 
-            builder.Property<DateTime>("_orderDate").HasColumnName("OrderDate").IsRequired();            
-            builder.Property<int>("_orderStatusId").HasColumnName("OrderStatusId").IsRequired();           
-            builder.Property<int?>("BuyerId").IsRequired(false);
-            builder.Property<int?>("PaymentMethodId").IsRequired(false);
+            builder
+                .Property<int?>("_buyerId")
+                .UsePropertyAccessMode(PropertyAccessMode.Field)
+                .HasColumnName("BuyerId")
+                .IsRequired(false);
+
+            builder
+                .Property<DateTime>("_orderDate")
+                .UsePropertyAccessMode(PropertyAccessMode.Field)
+                .HasColumnName("OrderDate")
+                .IsRequired();            
+
+            builder
+                .Property<int>("_orderStatusId")
+                .UsePropertyAccessMode(PropertyAccessMode.Field)
+                .HasColumnName("OrderStatusId")
+                .IsRequired();           
+            
+            builder
+                .Property<int?>("_paymentMethodId")
+                .UsePropertyAccessMode(PropertyAccessMode.Field)
+                .HasColumnName("PaymentMethodId")
+                .IsRequired(false);
+
             builder.Property<string>("Description").IsRequired(false);
 
             var navigation = builder.Metadata.FindNavigation(nameof(Order.OrderItems));
@@ -32,14 +52,14 @@ namespace Ordering.Infrastructure.EntityConfigurations.Sqlite
 
             builder.HasOne<PaymentMethod>()
                 .WithMany()
-                .HasForeignKey("PaymentMethodId")
+                .HasForeignKey("_paymentMethodId")
                 .IsRequired(false)
                 .OnDelete(DeleteBehavior.Restrict);
 
             builder.HasOne<Buyer>()
                 .WithMany()
                 .IsRequired(false)
-                .HasForeignKey("BuyerId");
+                .HasForeignKey("_buyerId");
 
             builder.HasOne(o => o.OrderStatus)
                 .WithMany()
@@ -109,25 +129,30 @@ namespace Ordering.Infrastructure.EntityConfigurations.Sqlite
             builder.Property<int>("BuyerId").IsRequired();
 
             builder.Property<string>("_cardHolderName")
+                .UsePropertyAccessMode(PropertyAccessMode.Field)
                 .HasColumnName("CardHolderName")
                 .HasMaxLength(200)
                 .IsRequired();
 
             builder.Property<string>("_alias")
+                .UsePropertyAccessMode(PropertyAccessMode.Field)
                 .HasColumnName("Alias")
                 .HasMaxLength(200)
                 .IsRequired();
 
             builder.Property<string>("_cardNumber")
+                .UsePropertyAccessMode(PropertyAccessMode.Field)
                 .HasColumnName("CardNumber")
                 .HasMaxLength(25)
                 .IsRequired();
 
             builder.Property<DateTime>("_expiration")
+                .UsePropertyAccessMode(PropertyAccessMode.Field)
                 .HasColumnName("Expiration")
                 .IsRequired();
 
             builder.Property<int>("_cardTypeId")
+                .UsePropertyAccessMode(PropertyAccessMode.Field)
                 .HasColumnName("CardTypeId")
                 .IsRequired();
 

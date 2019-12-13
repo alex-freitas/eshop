@@ -17,6 +17,8 @@ namespace Ordering.Infrastructure
     {
         public async Task SeedAsync(OrderingContext context, ILogger<OrderingContextSeed> logger)
         {
+            logger.LogCritical($"\r\n\r\nApplying migrations ({nameof(OrderingContext)})...\r\n\r\n");
+
             var policy = CreatePolicy(logger, nameof(OrderingContextSeed));
 
             await policy.ExecuteAsync(async () =>

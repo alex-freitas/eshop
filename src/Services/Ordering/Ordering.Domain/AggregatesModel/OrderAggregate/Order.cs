@@ -10,9 +10,11 @@
     public class Order : Entity, IAggregateRoot
     {
         private DateTime _orderDate;
-        private List<OrderItem> _orderItems;
-        private string _description;
+        private int? _buyerId;
+        private int? _paymentMethodId;
         private int _orderStatusId;
+        private string _description;
+        private readonly List<OrderItem> _orderItems;
 
         public Order(
             string userId,
@@ -27,13 +29,12 @@
             int? paymentMethodId = null)
             : this()
         {
-            Address = address;
-            BuyerId = buyerId;
-            PaymentMethodId = paymentMethodId;
-
+            _buyerId = buyerId;
+            _paymentMethodId = paymentMethodId;
             _orderStatusId = OrderStatus.Submitted.Id;
-            OrderStatus = OrderStatus.Submitted;
             _orderDate = DateTime.UtcNow;
+
+            Address = address;
 
             AddOrderStartedDomainEvent(userId, userName, cardTypeId, cardNumber, cardSecurityNumber, cardHolderName, cardExpiration);
         }
@@ -43,9 +44,7 @@
             _orderItems = new List<OrderItem>();
         }
 
-        public int? PaymentMethodId { get; private set; }
-
-        public int? BuyerId { get; private set; }
+        public int? GetBuyerId => _buyerId;
 
         public Address Address { get; private set; }
 
@@ -77,12 +76,12 @@
 
         public void SetPaymentId(int id)
         {
-            PaymentMethodId = id;
+            _paymentMethodId = id;
         }
 
         public void SetBuyerId(int id)
         {
-            BuyerId = id;
+            _buyerId = id;
         }
 
         public decimal GetTotal()
