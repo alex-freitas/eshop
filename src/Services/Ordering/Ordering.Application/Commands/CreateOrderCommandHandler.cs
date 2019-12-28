@@ -7,7 +7,7 @@ using Ordering.Application.IntegrationsEvents;
 using Ordering.Application.IntegrationsEvents.Events;
 using Ordering.Domain.AggregatesModel.OrderAggregate;
 
-namespace Ordering.Application.Commands.Handlers
+namespace Ordering.Application.Commands
 {
     public class CreateOrderCommandHandler : IRequestHandler<CreateOrderCommand, bool>
     {
@@ -52,14 +52,7 @@ namespace Ordering.Application.Commands.Handlers
 
             _orderRepository.Add(order);
 
-            try
-            {
-                return await _orderRepository.UnitOfWork.SaveEntitiesAsync(cancellationToken);
-            }
-            catch (Exception ex)
-            {
-                throw;
-            }
+            return await _orderRepository.UnitOfWork.SaveEntitiesAsync(cancellationToken);
         }
     }
 }

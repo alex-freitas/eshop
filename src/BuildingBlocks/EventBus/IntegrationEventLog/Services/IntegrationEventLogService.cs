@@ -11,16 +11,15 @@ namespace IntegrationEventLog.Services
 {
     public class IntegrationEventLogService : IIntegrationEventLogService
     {
-        private readonly DbContextOptions<IntegrationEventLogContext> _integrationEventLogContextOptions;
         private readonly IntegrationEventLogContext _integrationEventLogContext;
         private readonly List<Type> _eventTypes;
 
         public IntegrationEventLogService(DbContextOptions<IntegrationEventLogContext> dbContextOptions)
             : this()
         {
-            _integrationEventLogContextOptions = dbContextOptions ?? throw new ArgumentNullException(nameof(dbContextOptions));
+            var options = dbContextOptions ?? throw new ArgumentNullException(nameof(dbContextOptions));
 
-            _integrationEventLogContext = new IntegrationEventLogContext(_integrationEventLogContextOptions);
+            _integrationEventLogContext = new IntegrationEventLogContext(options);
         }
 
         private IntegrationEventLogService()

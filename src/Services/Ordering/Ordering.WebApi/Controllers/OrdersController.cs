@@ -6,6 +6,7 @@ using FluentValidation;
 using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using Ordering.Application.Commands;
 using Ordering.Application.Models;
 using Ordering.Application.Queries;
@@ -24,11 +25,13 @@ namespace Ordering.WebApi.Controllers
     {
         private readonly IMediator _mediator;
         private readonly IOrderQueries _orderQueries;
+        private readonly ILogger<OrdersController> _logger;
 
-        public OrdersController(IMediator mediator, IOrderQueries orderQueries)
+        public OrdersController(IMediator mediator, IOrderQueries orderQueries, ILogger<OrdersController> logger)
         {
             _mediator = mediator ?? throw new ArgumentNullException(nameof(mediator));
             _orderQueries = orderQueries ?? throw new ArgumentNullException(nameof(orderQueries));
+            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
         /// <summary>
@@ -122,7 +125,7 @@ namespace Ordering.WebApi.Controllers
             try
             {
                 var items = new List<BasketItem>
-                { 
+                {
                     new BasketItem { ProductId = "1", ProductName = "productName", UnitPrice = 10,  Quantity = 1, PictureUrl ="pictureUrl" }
                 };
 
@@ -154,6 +157,29 @@ namespace Ordering.WebApi.Controllers
 
                 return new InternalServerErrorObjectResult(ex.Messages());
             }
+        }
+
+        [Route("cancel")]
+        [HttpPut]
+        [ProducesResponseType((int)HttpStatusCode.OK)]
+        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
+        public async Task<IActionResult> CancelOrderAsync(
+            [FromBody] CancelOrderCommand command,
+            [FromHeader(Name = "x-requestid")] string requestId)
+        {
+            var commandResult = false;
+
+            if (Guid.TryParse(requestId, out Guid guid) && guid != Guid.Empty)
+            {
+                commandResult = await _mediator.Send(command);
+            }
+
+            if (!commandResult)
+            {
+                return BadRequest();
+            }
+
+            return Ok();
         }
     }
 }

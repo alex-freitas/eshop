@@ -8,7 +8,6 @@ using IntegrationEventLog.Services;
 using MediatR;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.OpenApi.Models;
@@ -104,11 +103,11 @@ namespace Ordering.WebApi.Extensions
             services.AddDbContext<IntegrationEventLogContext>(SqliteContextConfiguration(connectionString));
 
             services.AddTransient<Func<DbConnection, IIntegrationEventLogService>>(
-                sp => (DbConnection connection) => 
-                    new IntegrationEventLogService(new DbContextOptionsBuilder<IntegrationEventLogContext>()
-                        .EnableSensitiveDataLogging()
-                        .UseSqlite(connection)
-                        .Options));
+                sp => (DbConnection connection) => {                    
+                    var options = new DbContextOptionsBuilder<IntegrationEventLogContext>().EnableSensitiveDataLogging().UseSqlite(connection).Options;
+
+                    return new IntegrationEventLogService(options);
+                });
 
             return services;
         }
