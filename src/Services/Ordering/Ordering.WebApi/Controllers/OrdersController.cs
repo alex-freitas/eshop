@@ -2,12 +2,14 @@
 using System.Collections.Generic;
 using System.Net;
 using System.Threading.Tasks;
+using EventBus.Extensions;
 using FluentValidation;
 using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Ordering.Application.Commands;
+using Ordering.Application.Dtos;
 using Ordering.Application.Models;
 using Ordering.Application.Queries;
 using Ordering.WebApi.Extensions;
@@ -180,6 +182,20 @@ namespace Ordering.WebApi.Controllers
             }
 
             return Ok();
+        }
+
+        [Route("draft")]
+        [HttpPost]
+        public async Task<ActionResult<OrderDraftDto>> CreateOrderDraftFromBasketDataAsync([FromBody] CreateOrderDraftCommand cmd)
+        {
+            _logger.LogInformation(
+                "----- Sending command: {CommandName} - {IdProperty}: {CommandId} ({@Command})",
+                cmd.GetGenericTypeName(),
+                nameof(cmd.BuyerId),
+                cmd.BuyerId,
+                cmd);
+
+            return await _mediator.Send(cmd);
         }
     }
 }

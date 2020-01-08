@@ -5,7 +5,6 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Moq;
 using Ordering.Application.Commands;
-using Ordering.Application.Commands.Handlers;
 using Ordering.Application.IntegrationsEvents;
 using Ordering.Application.Models;
 using Ordering.Domain.AggregatesModel.OrderAggregate;

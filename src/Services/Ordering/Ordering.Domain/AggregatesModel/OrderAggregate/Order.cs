@@ -14,6 +14,7 @@
         private int? _paymentMethodId;
         private int _orderStatusId;
         private string _description;
+        private bool _isDraft;
         private readonly List<OrderItem> _orderItems;
 
         public Order(
@@ -51,6 +52,11 @@
         public OrderStatus OrderStatus { get; private set; }
 
         public IReadOnlyCollection<OrderItem> OrderItems => _orderItems;
+
+        public static Order NewDraft()
+        {
+            return new Order { _isDraft = true };
+        }
 
         public void AddOrderItem(int productId, string productName, decimal unitPrice, decimal discount, string pictureUrl, int units = 1)
         {

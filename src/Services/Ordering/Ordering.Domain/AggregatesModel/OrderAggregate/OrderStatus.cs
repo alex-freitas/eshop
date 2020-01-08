@@ -8,12 +8,12 @@ namespace Ordering.Domain.AggregatesModel.OrderAggregate
 {
     public class OrderStatus : Enumeration
     {
-        public static OrderStatus Submitted = new OrderStatus(1, nameof(Submitted).ToUpperInvariant());
-        public static OrderStatus AwaitingValidation = new OrderStatus(2, nameof(AwaitingValidation).ToUpperInvariant());
-        public static OrderStatus StockConfirmed = new OrderStatus(3, nameof(StockConfirmed).ToUpperInvariant());
-        public static OrderStatus Paid = new OrderStatus(4, nameof(Paid).ToUpperInvariant());
-        public static OrderStatus Shipped = new OrderStatus(5, nameof(Shipped).ToUpperInvariant());
-        public static OrderStatus Cancelled = new OrderStatus(6, nameof(Cancelled).ToUpperInvariant());
+        public static readonly OrderStatus Submitted = new OrderStatus(1, nameof(Submitted).ToUpperInvariant());
+        public static readonly OrderStatus AwaitingValidation = new OrderStatus(2, nameof(AwaitingValidation).ToUpperInvariant());
+        public static readonly OrderStatus StockConfirmed = new OrderStatus(3, nameof(StockConfirmed).ToUpperInvariant());
+        public static readonly OrderStatus Paid = new OrderStatus(4, nameof(Paid).ToUpperInvariant());
+        public static readonly OrderStatus Shipped = new OrderStatus(5, nameof(Shipped).ToUpperInvariant());
+        public static readonly OrderStatus Cancelled = new OrderStatus(6, nameof(Cancelled).ToUpperInvariant());
 
         public OrderStatus(int id, string name)
             : base(id, name)
@@ -27,15 +27,15 @@ namespace Ordering.Domain.AggregatesModel.OrderAggregate
 
         public static OrderStatus FromName(string name)
         {
-            var state = List()
+            var status = List()
                 .SingleOrDefault(s => string.Equals(s.Name, name, StringComparison.CurrentCultureIgnoreCase));
 
-            if (state == null)
+            if (status == null)
             {
                 throw new OrderingDomainException($"Possible values for OrderStatus: {string.Join(",", List().Select(s => s.Name))}");
             }
 
-            return state;
+            return status;
         }
 
         public static OrderStatus From(int id)
