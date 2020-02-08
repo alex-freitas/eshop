@@ -1,0 +1,85 @@
+﻿
+
+
+.popup_class {
+    background-color: white;
+    box-shadow: 4px 4px 4px #888888;
+    /*border: 1px solid #888888;*/
+    word-wrap: break-word;
+}
+
+.popup_header {
+    font-size: 12pt;
+    font-weight: bold;
+}
+
+
+.popup_closeButton {
+    position: absolute;
+    right: 9px;
+    top: 9px;
+    padding: 0;
+    min-width: 25px;
+    width: 25px;
+    height: 25px;
+    font-weight: bold;
+    font-size: 12pt;
+}
+
+
+.fa-15 {
+    font-size: 1.5em;
+}
+
+.pointer {
+    cursor: pointer;
+}
+
+.pagging_buttons {
+    margin-top: 0 !important;
+    margin-bottom: 0 !important;
+    padding-top: 3px !important;
+    padding-bottom: 3px !important;
+}
+
+.mensagem {
+    font-size: 1.4em;
+    font-weight: bold;
+    color: white;
+    background-color: #2C699E;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    padding-left: 20px;
+    padding-right: 20px;
+    border-right: white solid 1px;
+    border-left: white solid 1px;
+    border-bottom: white solid 1px;
+}
+
+table {
+    margin-top: 10px;
+}
+
+.job-enabled {
+    font-weight: bold;
+    color: green;
+}
+
+.job-disabled {
+    font-weight: bold;
+    color: red;
+}
+
+tbody tr {
+    background-color: white;
+}
+
+    tbody tr:hover {
+        background-color: lightblue !important;
+    }
+
+th {
+    background-color: #337ab7;
+    color: white;
+    border: solid 1px white;
+}

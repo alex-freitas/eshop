@@ -69,7 +69,6 @@ namespace IntegrationEventLog.Services
             }
             catch (Exception ex)
             {
-
                 throw;
             }
 

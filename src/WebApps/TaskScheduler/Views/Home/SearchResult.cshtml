@@ -1,0 +1,15 @@
+﻿@using TaskScheduler.Entities
+
+@model List<Job>
+
+@foreach (var item in Model)
+{
+    <tr data-id="@item.Id" data-job-type="@item.JobType">
+        <td>@item.Name</td>
+        <td>@item.JobType</td>
+        <td class="@(item.Enabled ? "job-enabled" : "job-disabled")">@(item.Enabled ? "Enabled" : "Disabled")</td>
+        <td>@item.Cron</td>
+        <td><i name="edit" class="fa fa-pencil-square-o fa-15 pointer"></i></td>
+        <td><i name="delete" class="fa fa-trash-o fa-15 pointer"></i></td>
+    </tr>
+}

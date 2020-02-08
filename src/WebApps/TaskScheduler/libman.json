@@ -1,5 +1,14 @@
 {
   "version": "1.0",
   "defaultProvider": "cdnjs",
-  "libraries": []
+  "libraries": [
+    {
+      "library": "jqueryui@1.12.1",
+      "destination": "wwwroot/lib/jqueryui/"
+    },
+    {
+      "library": "jquery.maskedinput@1.4.1",
+      "destination": "wwwroot/lib/jquery.maskedinput/"
+    }
+  ]
 }

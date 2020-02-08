@@ -1,0 +1,38 @@
+﻿<div id="JobRegister" class="container-fluid">
+
+    <form class="form-horizontal" role="form">
+
+        <div class="form-group">
+            <label class="control-label col-sm-3">Name:</label>
+            <div class="col-sm-8">
+                <input type="text" class="form-control input-sm" name="NamePart" />
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="control-label col-sm-3">Status:</label>
+            <div class="col-sm-8">
+                <label class="radio-inline"><input type="radio" name="Status">All</label>
+                <label class="radio-inline"><input type="radio" name="Status">Enabled</label>
+                <label class="radio-inline"><input type="radio" name="Status">Disabled</label>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="control-label col-sm-3">Rows per page:</label>
+            <div class="col-sm-8">
+                <input type="text" class="required number form-control input-sm" min="1" name="MaxRows" value="10" />
+            </div>
+        </div>
+
+        <input type="hidden" name="SortBy" />
+        <input type="hidden" name="StartRow" />
+    </form>
+
+    <div class="pull-right">
+        <button id="cancel" class="btn btn-danger">Cancel</button>
+        <button id="save" class="btn btn-primary">Save</button>
+    </div>
+</div>
+
+@*<script>views.Job.Register()</script>*@
