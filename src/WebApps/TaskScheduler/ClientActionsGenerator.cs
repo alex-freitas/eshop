@@ -30,7 +30,7 @@ namespace TaskScheduler
             {
                 var js = new StringBuilder();
                 
-                var assembly = typeof(HomeController).Assembly;
+                var assembly = typeof(JobController).Assembly;
 
                 GenerateScript(urlHelper, assembly, js);
 
@@ -94,18 +94,26 @@ namespace TaskScheduler
             }
         }
 
-        private static IEnumerable<Type> GetControllers(Assembly a)
+        private static List<Type> GetControllers(Assembly a)
         {
-            return a.DefinedTypes
+            IEnumerable<Type> enumerable = a.DefinedTypes
                 .Where(x =>
                     typeof(Controller).IsAssignableFrom(x) &&
                     x.GetCustomAttribute<GenerateClientActionsAttribute>() != null);
+
+            return enumerable.ToList();
         }
 
-        private static IEnumerable<MethodInfo> GetActions(Type controller)
+        private static List<MethodInfo> GetActions(Type controller)
         {
-            return controller.GetMethods(BindingFlags.Public | BindingFlags.Instance)
+            IEnumerable<MethodInfo> enumerable = controller
+                .GetMethods(BindingFlags.Public | BindingFlags.Instance)
+                .Where(x => !x.IsVirtual)
                 .Where(x => x.ReturnType == typeof(ActionResult) || x.ReturnType == typeof(Task<ActionResult>));
+
+            var actions = enumerable.ToList();
+
+            return actions;
         }
     }
 

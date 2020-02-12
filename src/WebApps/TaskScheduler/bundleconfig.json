@@ -6,7 +6,7 @@
       "wwwroot/js/config.js",
       "wwwroot/js/core.js",
       "wwwroot/js/dialogs.js",
-      "wwwroot/js/views/Home.js",
+      "wwwroot/js/views/Job.js",
       "wwwroot/js/views/SqlCommandJob.js"
     ],
 

@@ -2,7 +2,6 @@
 using System.Linq;
 using Hangfire;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
 using TaskScheduler.Entities;
 using TaskScheduler.Infrastructure;
 using TaskScheduler.Models.SqlCommandJob;
@@ -12,12 +11,10 @@ namespace TaskScheduler.Controllers
     [GenerateClientActions]
     public class SqlCommandJobController : Controller
     {
-        private readonly ILogger<HomeController> _logger;
         private readonly TaskSchedulerDbContext _db;
 
-        public SqlCommandJobController(ILogger<HomeController> logger, TaskSchedulerDbContext db)
+        public SqlCommandJobController(TaskSchedulerDbContext db)
         {
-            _logger = logger;
             _db = db;
         }
 
